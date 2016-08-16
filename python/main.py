@@ -1,4 +1,5 @@
 import json
+import yaml
 from view import NodalView
 from scene import NodalScene
 from node import Node
@@ -131,9 +132,10 @@ if __name__ == '__main__':
 
     # Load
     try:
-        with open('./scene.json') as scene_file:
-            document = json.load(scene_file)
-            scene.from_document(document)
+        with open('./scene.yml') as scene_file:
+            document_yml = scene_file.read()
+        document = yaml.load(document_yml)
+        scene.from_document(document)
     except Exception, e:
         print e.message
         populate(scene)
@@ -172,5 +174,6 @@ if __name__ == '__main__':
 
     # Save Scene
     document = scene.as_document()
-    with open('./scene.json', 'w+') as scene_file:
-        json.dump(document, scene_file, indent=4)
+    document_yml = yaml.dump(document, indent=2)
+    with open('./scene.yml', 'w+') as scene_file:
+        scene_file.write(document_yml)
