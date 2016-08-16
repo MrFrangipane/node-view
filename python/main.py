@@ -1,5 +1,4 @@
-import json
-import yaml
+import persistance
 from view import NodalView
 from scene import NodalScene
 from node import Node
@@ -132,9 +131,7 @@ if __name__ == '__main__':
 
     # Load
     try:
-        with open('./scene.yml') as scene_file:
-            document_yml = scene_file.read()
-        document = yaml.load(document_yml)
+        document = persistance.document_from_file('./scene.yml')
         scene.from_document(document)
     except Exception, e:
         print e.message
@@ -174,6 +171,4 @@ if __name__ == '__main__':
 
     # Save Scene
     document = scene.as_document()
-    document_yml = yaml.dump(document, indent=2)
-    with open('./scene.yml', 'w+') as scene_file:
-        scene_file.write(document_yml)
+    persistance.document_to_file(document, './scene.yml')

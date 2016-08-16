@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from PySide.QtGui import QGraphicsScene
 from PySide.QtCore import QPoint
 from node import Node
@@ -140,7 +141,7 @@ class NodalScene(QGraphicsScene):
 
         for node in self.nodes:
             # Node Dict
-            node_dict = dict()
+            node_dict = OrderedDict()
             node_dict['name'] = node.name
             node_dict['color'] = node.color
             node_dict['caption'] = node.caption
@@ -154,7 +155,7 @@ class NodalScene(QGraphicsScene):
             # Each Input Slot
             for slot in node.input_slots:
                 # Slot Dict
-                slot_dict = dict()
+                slot_dict = OrderedDict()
                 slot_dict['name'] = slot.name
                 slot_dict['color'] = slot.color
                 # Append
@@ -163,7 +164,7 @@ class NodalScene(QGraphicsScene):
             # Each Output Slot
             for slot in node.output_slots:
                 # Slot Dict
-                slot_dict = dict()
+                slot_dict = OrderedDict()
                 slot_dict['name'] = slot.name
                 slot_dict['color'] = slot.color
                 # Append
