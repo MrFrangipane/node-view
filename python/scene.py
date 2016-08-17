@@ -1,3 +1,4 @@
+import logging
 from collections import OrderedDict
 from PySide.QtGui import QGraphicsScene
 from PySide.QtCore import QPoint
@@ -31,6 +32,12 @@ class NodalScene(QGraphicsScene):
         # Add
         self.addItem(node.implementation)
         self.nodes.append(node)
+        # Log
+        logging.info("Adding Node '{node_name}' to Scene at {node_position}".format(
+            node_name=node.name,
+            node_caption=node.caption,
+            node_position=node.position
+        ))
 
     def new_edge(self, input_slot, output_slot):
         # New Edge
@@ -143,8 +150,8 @@ class NodalScene(QGraphicsScene):
             # Node Dict
             node_dict = OrderedDict()
             node_dict['name'] = node.name
-            node_dict['color'] = node.color
             node_dict['caption'] = node.caption
+            node_dict['color'] = node.color
             node_dict['position'] = node.position
             node_dict['size'] = node.size
             node_dict['is_selected'] = node.is_selected
@@ -237,9 +244,11 @@ class NodalScene(QGraphicsScene):
         # Each Connection
         for connection_dict in document['connections']:
             # Connect
-            input_slot = self.nodes[connection_dict['origin_node_id']].output_slots[connection_dict['origin_slot_id']]
-            output_slot = self.nodes[connection_dict['target_node_id']].input_slots[connection_dict['target_slot_id']]
-            input_slot.connect(output_slot)
+            source_node = self.nodes[connection_dict['origin_node_id']]
+            target_node = self.nodes[connection_dict['target_node_id']]
+            source_slot = source_node.output_slots[connection_dict['origin_slot_id']]
+            target_slot = target_node.input_slots[connection_dict['target_slot_id']]
+            source_slot.connect(target_slot)
 
     # Events
     def mousePressEvent(self, event):

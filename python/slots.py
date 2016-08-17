@@ -1,5 +1,8 @@
+import logging
+
 DEFAULT_INPUT_COLOR = (.05, .95, .95)
 DEFAULT_OUTPUT_COLOR = (.95, .05, .95)
+
 
 class AbstractSlot(object):
 
@@ -32,6 +35,13 @@ class InputSlot(AbstractSlot):
         output_slot.connected_slots.append(self)
         # Warn Parent Nodes
         self.parent_node.input_connected(output_slot, self)
+        # Log
+        logging.info('Connecting {source_node}.{source_slot} ---> {target_node}.{target_slot}'.format(
+            source_node=output_slot.parent_node.name,
+            source_slot=output_slot.name,
+            target_node=self.parent_node.name,
+            target_slot=self.name
+        ))
 
     def disconnect(self, output_slot):
         # If present
@@ -41,6 +51,13 @@ class InputSlot(AbstractSlot):
             output_slot.connected_slots.remove(self)
             # Warn Parent Node
             self.parent_node.input_disconnected(output_slot, self)
+        # Log
+        logging.info('Disconnecting {source_node}.{source_slot} -X-> {target_node}.{target_slot}'.format(
+            source_node=output_slot.parent_node.name,
+            source_slot=output_slot.name,
+            target_node=self.parent_node.name,
+            target_slot=self.name
+        ))
 
 
 class OutputSlot(AbstractSlot):
@@ -56,6 +73,13 @@ class OutputSlot(AbstractSlot):
         input_slot.connected_slots.append(self)
         # Warn Parent Nodes
         self.parent_node.output_connected(self, input_slot)
+        # Log
+        logging.info('Connecting {source_node}.{source_slot} ---> {target_node}.{target_slot}'.format(
+            source_node=self.parent_node.name,
+            source_slot=self.name,
+            target_node=input_slot.parent_node.name,
+            target_slot=input_slot.name
+        ))
 
     def disconnect(self, input_slot):
         # If present
@@ -65,3 +89,10 @@ class OutputSlot(AbstractSlot):
             input_slot.connected_slots.remove(self)
             # Warn Parent Node
             self.parent_node.input_disconnected(self, input_slot)
+        # Log
+        logging.info('Disconnecting {source_node}.{source_slot} -X-> {target_node}.{target_slot}'.format(
+            source_node=self.parent_node.name,
+            source_slot=self.name,
+            target_node=input_slot.parent_node.name,
+            target_slot=input_slot.name
+        ))

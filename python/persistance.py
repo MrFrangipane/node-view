@@ -1,5 +1,6 @@
-from collections import OrderedDict
+import os
 import yaml
+from collections import OrderedDict
 
 
 def represent_ordered_dict(dumper, ordered_dict):
@@ -24,6 +25,11 @@ yaml.SafeDumper.ignore_aliases = lambda self, data: True
 def document_to_file(document, filepath):
     # Dump
     document_yaml = yaml.safe_dump(document, indent=2)
+    # Add Header
+    document_yaml = "---\n" + document_yaml
+    # Create Folders
+    if not os.path.isdir(os.path.dirname(filepath)):
+        os.makedirs(os.path.dirname(filepath))
     # Open
     with open(filepath, "w+") as file_document:
         # Write

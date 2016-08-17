@@ -1,0 +1,145 @@
+---
+connections:
+- {origin_node_id: 2, origin_slot_id: 0, target_node_id: 5, target_slot_id: 3}
+- {origin_node_id: 2, origin_slot_id: 0, target_node_id: 5, target_slot_id: 5}
+- {origin_node_id: 3, origin_slot_id: 0, target_node_id: 6, target_slot_id: 3}
+- {origin_node_id: 4, origin_slot_id: 0, target_node_id: 3, target_slot_id: 0}
+- {origin_node_id: 5, origin_slot_id: 0, target_node_id: 6, target_slot_id: 0}
+- {origin_node_id: 5, origin_slot_id: 0, target_node_id: 6, target_slot_id: 1}
+- {origin_node_id: 5, origin_slot_id: 0, target_node_id: 6, target_slot_id: 2}
+- {origin_node_id: 7, origin_slot_id: 0, target_node_id: 2, target_slot_id: 0}
+- {origin_node_id: 7, origin_slot_id: 1, target_node_id: 4, target_slot_id: 0}
+- {origin_node_id: 7, origin_slot_id: 1, target_node_id: 4, target_slot_id: 2}
+nodes:
+- name: Backdrop
+  caption: Range des trucs ici
+  color: [0, 0, 0]
+  position: [-267.0, -193.0]
+  size: [794.0, 269.0]
+  is_selected: false
+  is_resizable: true
+  input_slots: []
+  output_slots: []
+- name: Backdrop
+  caption: Range des trucs ici 2
+  color: [0, 0, 0]
+  position: [-228.0, 107.0]
+  size: [488.0, 269.0]
+  is_selected: false
+  is_resizable: true
+  input_slots: []
+  output_slots: []
+- name: Output
+  caption: Linear Ramp
+  color: [0.75, 0.75, 0.25]
+  position: [-230.0, -90.0]
+  size: [200, 76]
+  is_selected: false
+  is_resizable: false
+  input_slots:
+  - name: Input
+    color: [0.75, 0.75, 0.75]
+  output_slots:
+  - name: Out
+    color: [0.75, 0.75, 0.75]
+- name: Output
+  caption: Invert Ramp
+  color: [0.25, 0.75, 0.75]
+  position: [22.0, 190.0]
+  size: [200, 76]
+  is_selected: false
+  is_resizable: false
+  input_slots:
+  - name: Input
+    color: [0.75, 0.75, 0.75]
+  output_slots:
+  - name: Out
+    color: [0.75, 0.75, 0.75]
+- name: Rocks
+  caption: Shader des familles
+  color: [0.75, 0.5, 0.25]
+  position: [-201.0, 155.0]
+  size: [200, 201]
+  is_selected: false
+  is_resizable: false
+  input_slots:
+  - name: Diffuse
+    color: [0.95, 0.95, 0.05]
+  - name: Reflection
+    color: [0.95, 0.95, 0.05]
+  - name: Refraction
+    color: [0.95, 0.95, 0.05]
+  - name: Bump
+    color: [0.05, 0.95, 0.95]
+  - name: Opacity
+    color: [0.95, 0.95, 0.05]
+  - name: Displace
+    color: [0.05, 0.95, 0.95]
+  output_slots:
+  - name: Out
+    color: [0.05, 0.95, 0.95]
+- name: Snow
+  caption: Chantale Goyave
+  color: [0.5, 0.5, 0.95]
+  position: [31.0, -142.0]
+  size: [200, 201]
+  is_selected: false
+  is_resizable: false
+  input_slots:
+  - name: Diffuse
+    color: [0.95, 0.95, 0.05]
+  - name: Reflection
+    color: [0.95, 0.95, 0.05]
+  - name: Refraction
+    color: [0.95, 0.95, 0.05]
+  - name: Bump
+    color: [0.05, 0.95, 0.95]
+  - name: Opacity
+    color: [0.95, 0.95, 0.05]
+  - name: Displace
+    color: [0.05, 0.95, 0.95]
+  output_slots:
+  - name: Out
+    color: [0.05, 0.95, 0.95]
+- name: Convert 1
+  caption: Pierre Cadran
+  color: [0.95, 0.25, 0.25]
+  position: [296.0, -117.0]
+  size: [200, 151]
+  is_selected: false
+  is_resizable: false
+  input_slots:
+  - name: Red
+    color: [0.9, 0.1, 0.1]
+  - name: Green
+    color: [0.1, 0.9, 0.1]
+  - name: Blue
+    color: [0.1, 0.1, 0.9]
+  - name: Alpha
+    color: [0.8, 0.8, 0.8]
+  output_slots:
+  - name: Chroma
+    color: [0.05, 0.95, 0.95]
+  - name: Luma
+    color: [0.05, 0.95, 0.95]
+- name: Convert 2
+  caption: ''
+  color: [0.25, 0.75, 0.25]
+  position: [-550.0, 73.0]
+  size: [200, 151]
+  is_selected: false
+  is_resizable: false
+  input_slots:
+  - name: Red
+    color: [0.9, 0.1, 0.1]
+  - name: Green
+    color: [0.1, 0.9, 0.1]
+  - name: Blue
+    color: [0.1, 0.1, 0.9]
+  - name: Alpha
+    color: [0.8, 0.8, 0.8]
+  output_slots:
+  - name: Chroma
+    color: [0.05, 0.95, 0.95]
+  - name: Luma
+    color: [0.05, 0.95, 0.95]
