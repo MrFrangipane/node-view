@@ -14,8 +14,8 @@ nodes:
 - name: Backdrop
   caption: Range des trucs ici
   color: [0, 0, 0]
-  position: [-267.0, -193.0]
-  size: [794.0, 269.0]
+  position: [-252.0, -190.0]
+  size: [779.0, 265.0]
   is_selected: false
   is_resizable: true
   input_slots: []
@@ -32,7 +32,7 @@ nodes:
 - name: Output
   caption: Linear Ramp
   color: [0.75, 0.75, 0.25]
-  position: [-230.0, -90.0]
+  position: [-223.0, -90.0]
   size: [200, 76]
   is_selected: false
   is_resizable: false
@@ -58,7 +58,7 @@ nodes:
 - name: Rocks
   caption: Shader des familles
   color: [0.75, 0.5, 0.25]
-  position: [-201.0, 155.0]
+  position: [-195.0, 155.0]
   size: [200, 201]
   is_selected: false
   is_resizable: false
@@ -104,7 +104,7 @@ nodes:
 - name: Convert 1
   caption: Pierre Cadran
   color: [0.95, 0.25, 0.25]
-  position: [296.0, -117.0]
+  position: [296.0, -118.0]
   size: [200, 151]
   is_selected: false
   is_resizable: false
