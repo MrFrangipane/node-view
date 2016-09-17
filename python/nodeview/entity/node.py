@@ -1,0 +1,4 @@
+
+
+class Node(object):
+    pass
