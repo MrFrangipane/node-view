@@ -1,4 +1,5 @@
+import entity
 
 
-class Node(object):
+class Node(entity.Entity):
     pass

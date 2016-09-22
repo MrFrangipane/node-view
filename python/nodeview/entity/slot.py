@@ -1,4 +1,5 @@
+import entity
 
 
-class Slot(object):
+class Slot(entity.Entity):
     pass

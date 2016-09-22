@@ -1,4 +1,5 @@
+import entity
 
 
-class Scene(object):
+class Scene(entity.Entity):
     pass

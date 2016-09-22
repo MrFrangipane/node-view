@@ -5,11 +5,11 @@ WIDTH = 200
 HEADER_HEIGHT = 40
 ROW_HEIGHT = 25
 
-BACKGROUND_COLOR = (.2, .2, .2)
+BACKGROUND_COLOR = (.22, .22, .22, 1)
 FRAME_COLOR = (0, 0, 0)
 
-SHADOW_COLOR = (1, 1, 1, .2)
-SHADOW_RADIUS = 50
+SHADOW_COLOR = (1, 1, 1, .1)
+SHADOW_RADIUS = 15
 
 HANDLE_RADIUS = 7
 HANDLE_COLOR = (1, 1, 1)
@@ -62,7 +62,7 @@ class NodePySide(QGraphicsItem):  # Move all geometry computations in upper clas
         self.shadow.setYOffset(0)
         self.shadow.setBlurRadius(SHADOW_RADIUS)
         self.setGraphicsEffect(self.shadow)
-        self.shadow.setEnabled(False)
+        self.shadow.setEnabled(True)
 
         # Members
         self.node = node
@@ -224,9 +224,7 @@ class NodePySide(QGraphicsItem):  # Move all geometry computations in upper clas
         painter.setBrush(Qt.NoBrush)
         if self.isSelected():
             painter.setPen(_color(HANDLE_COLOR))
-        else:
-            painter.setPen(_color(FRAME_COLOR))
-        painter.drawRect(self._rect)
+            painter.drawRect(self._rect)
 
         # Header Text
         painter.setFont(NAME_FONT)
@@ -496,7 +494,7 @@ class NodePySide(QGraphicsItem):  # Move all geometry computations in upper clas
             # Warn Scene
             self.scene().node_changed(self.node)
             # Shadow Effect
-            self.shadow.setEnabled(self.isSelected())
+            self.shadow.setColor(QColor.fromRgbF(*SHADOW_COLOR))
 
         # Forward
         return QGraphicsItem.itemChange(self, change, value)

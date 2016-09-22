@@ -1,8 +1,8 @@
 import logging
-import persistance
-from view import NodalView
-from scene import NodalScene
 
+from nodeview import persistance
+from scene import NodalScene
+from view import NodalView
 
 if __name__ == '__main__':
     # Log to INFO
