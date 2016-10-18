@@ -52,8 +52,8 @@ class EdgeGeometry(object):
         self.bounding_rect = (
             0,
             0,
-            abs(width) + EDGE_OVERSCAN * 2.0,
-            abs(height) + EDGE_OVERSCAN * 2.0
+            abs(width) + EDGE_OVERSCAN * (2.0 + EDGE_WIDTH),
+            abs(height) + EDGE_OVERSCAN * (2.0 + EDGE_WIDTH)
         )
 
 
