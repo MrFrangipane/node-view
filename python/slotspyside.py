@@ -1,3 +1,5 @@
+import pickle
+import tempfile
 from PySide.QtGui import *
 from PySide.QtCore import *
 
@@ -43,47 +45,60 @@ SLOT_FONT = QFont()
 def _color(values):
     return QColor.fromRgbF(*values)
 
-slot = InputSlot('lalislot')
-
-
-class SlotDotPySide(QGraphicsItem, QGraphicsLayoutItem):
-    def __init__(self,x=0 ,y=0, parent=None):
+class SlotDotPySide(QGraphicsItem):
+    def __init__(self,x=0 ,y=0, slot=None, parent=None):
         super(SlotDotPySide, self).__init__()
-
-        input_rect = QRect(x, y, SLOT_RADIUS, SLOT_RADIUS)
-
-        self.tmp_dict = {'slot':input_rect}
-        self._slot_input_hovered = False
-
-        self.setAcceptDrops(True)
-        self.setAcceptHoverEvents(True)
-
+        #args
+        self.x = x
+        self.y = y
+        self.slot = slot
+        #attributes
+        self.input_rect = QRect(self.x, self.y, SLOT_RADIUS, SLOT_RADIUS)
         self.color_pen = FRAME_SLOT_COLOR
         self.color_brush = (0,0,0)
+        self._slot_input_hovered = False
+        #mime data for dragdrop
+        self.mimeSlot = QMimeData()
+        self.mimePos = QMimeData()
+        #creation du path du slot 'nodename|slotname'
+        self.slot.path_name = self.slot.parent_node.name + '|' + self.slot.name
+        #setflag pour hover et drops
+        self.setAcceptHoverEvents(True)
+        self.setAcceptDrops(True)
 
     def boundingRect(self):
-        return self.tmp_dict['slot']
+        return self.input_rect
 
     def mousePressEvent(self, event):
         if event.button() != Qt.LeftButton:
             event.ignore()
             return
+        self.mimeSlot.setText(self.slot.path_name)
+
+    def dragEnterEvent(self, event):
+        event.setAccepted(True)
+
+    def dropEvent(self, event):
+        self.dragOver = False
+        self.slot.connect_to = event.mimeData().text()
+        self.eval_connection_slot()
 
     def mouseMoveEvent(self, event):
         if QLineF(QPointF(event.screenPos()), QPointF(
                 event.buttonDownScreenPos(Qt.LeftButton))).length() < QApplication.startDragDistance():
             return
         drag = QDrag(event.widget())
-        mime = QMimeData()
-        drag.setMimeData(mime)
-        mime.setText(self.tmp_dict.keys()[0])
+        drag.setMimeData(self.mimeSlot)
         drag.exec_()
 
-    def dragEnterEvent(self, event):
-        event.setAccepted(True)
-
-    def dropEvent(self, event):
-        print "dropped"
+    def eval_connection_slot(self):
+        for item in self.scene().items():
+            if isinstance(item, SlotPySide):
+                if item.objectName() == self.slot.connect_to:
+                    self.slot.connect(item.slot)
+                    break
+        #MARCHE PAS JE SAIS PAS POURQUOIIII :
+        #print self.scene().findChild(QGraphicsObject, self.slot.connect_to)
 
     def hoverMoveEvent(self, event):
         self._slot_input_hovered = True
@@ -98,32 +113,39 @@ class SlotDotPySide(QGraphicsItem, QGraphicsLayoutItem):
         painter.setBrush(_color(self.color_brush))
         if self._slot_input_hovered:
             painter.setBrush(_color((1, 1, 1)))
-        painter.drawEllipse(self.tmp_dict['slot'])
+        painter.drawEllipse(self.input_rect)
 
-class SlotPySide(QGraphicsItem):
+
+
+class SlotPySide(QGraphicsObject):
     def __init__(self, x, y, slot=AbstractSlot):
         super(SlotPySide, self).__init__()
         self.x = x
         self.y = y
+        self.slot = slot
 
-        self.input_rect = QRect(x, y, 100, SLOT_RADIUS+2)
+        self.input_rect = QRect(self.x, self.y, WIDTH, ROW_HEIGHT)
 
-        self.dot = SlotDotPySide(self.x, self.y - SLOT_RADIUS)
+        self.dot = SlotDotPySide(self.input_rect.x(), self.input_rect.y()+1, slot=self.slot)
         self.dot.setParentItem(self)
 
-        self.slot = slot
+        self.setObjectName(self.dot.slot.path_name)
+
         self.text = self.slot.name
         self.text_color = TEXT_COLOR
+        self.text_align = Qt.AlignLeft
 
+        self.setAcceptDrops(True)
+        self.mime = QMimeData()
 
     def boundingRect(self):
         return self.input_rect
 
     def paint(self, painter, option, widget):
-        # Input Labels
-        #painter.setFont(SLOT_FONT)
         painter.setPen(_color(self.text_color))
-        painter.drawText(self.x + TEXT_DOT_PADDING, self.y, self.text)
+        painter.drawText(self.input_rect, self.text_align, self.text)
+
+
 
 class InputSlotPySide(SlotPySide):
     def __init__(self,x,y,slot=InputSlot):
@@ -134,4 +156,6 @@ class InputSlotPySide(SlotPySide):
 class OutputSlotPySide(SlotPySide):
     def __init__(self,x,y,slot=InputSlot):
         super(OutputSlotPySide, self).__init__(x, y, slot=slot)
+        self.dot.setPos(WIDTH,0)
         self.dot.color_brush = BRUSH_OUTPUTSLOT_COLOR
+        self.text_align = Qt.AlignRight
