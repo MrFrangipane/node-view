@@ -57,23 +57,36 @@ class SlotDotPySide(QGraphicsItem):
         self.color_pen = FRAME_SLOT_COLOR
         self.color_brush = (0,0,0)
         self._slot_input_hovered = False
-        #mime data for dragdrop
-        self.mimeSlot = QMimeData()
-        self.mimePos = QMimeData()
+        self.dot_pos = self.mapToScene(self.input_rect)
         #creation du path du slot 'nodename|slotname'
         self.slot.path_name = self.slot.parent_node.name + '|' + self.slot.name
         #setflag pour hover et drops
         self.setAcceptHoverEvents(True)
         self.setAcceptDrops(True)
+        #update pos
+        #self.update_pos()
+
+    def update_pos(self):
+        mapped_pos = self.mapToScene(self.input_rect)
+        self.dot_pos = (mapped_pos.boundingRect().x() + SLOT_RADIUS / 2.0, mapped_pos.boundingRect().y() + SLOT_RADIUS / 2.0)
 
     def boundingRect(self):
         return self.input_rect
 
     def mousePressEvent(self, event):
+        #super(SlotDotPySide, self).mousePressEvent(event)
         if event.button() != Qt.LeftButton:
             event.ignore()
             return
-        self.mimeSlot.setText(self.slot.path_name)
+        self.mimePos = QMimeData()
+        itemData = QByteArray()
+        dataStream = QDataStream(itemData, QIODevice.WriteOnly)
+        dataStream << QPointF(self.scenePos())
+        self.mimePos.setData('Pos', itemData)
+        #Mime Data path name
+        self.mimePos.setText(self.slot.path_name)
+
+        self.scene().input_slot_pressed(self.slot)
 
     def dragEnterEvent(self, event):
         event.setAccepted(True)
@@ -81,24 +94,36 @@ class SlotDotPySide(QGraphicsItem):
     def dropEvent(self, event):
         self.dragOver = False
         self.slot.connect_to = event.mimeData().text()
+        print 'path:'
+        print event.mimeData().text()
+        #TMP #Get MimeData position
+        pos = QPointF()
+        itemData = event.mimeData().data('Pos')
+        dataStream = QDataStream(itemData, QIODevice.ReadOnly)
+        dataStream >> pos
+        print pos
+        print 'Dropped'
         self.eval_connection_slot()
 
     def mouseMoveEvent(self, event):
+        super(SlotDotPySide, self).mouseMoveEvent(event)
         if QLineF(QPointF(event.screenPos()), QPointF(
                 event.buttonDownScreenPos(Qt.LeftButton))).length() < QApplication.startDragDistance():
             return
         drag = QDrag(event.widget())
-        drag.setMimeData(self.mimeSlot)
+        drag.setMimeData(self.mimePos)
         drag.exec_()
+
 
     def eval_connection_slot(self):
         for item in self.scene().items():
             if isinstance(item, SlotPySide):
                 if item.objectName() == self.slot.connect_to:
+                    print 'try connect'
                     self.slot.connect(item.slot)
                     break
         #MARCHE PAS JE SAIS PAS POURQUOIIII :
-        #print self.scene().findChild(QGraphicsObject, self.slot.connect_to)
+        #print self.scene().findChild(InputSlotPySide, self.slot.connect_to)
 
     def hoverMoveEvent(self, event):
         self._slot_input_hovered = True
@@ -123,20 +148,19 @@ class SlotPySide(QGraphicsObject):
         self.x = x
         self.y = y
         self.slot = slot
-
+        #Attributes
         self.input_rect = QRect(self.x, self.y, WIDTH, ROW_HEIGHT)
-
+        self.text = self.slot.name
+        self.text_color = TEXT_COLOR
+        self.text_align = Qt.AlignLeft
+        #dot object
         self.dot = SlotDotPySide(self.input_rect.x(), self.input_rect.y()+1, slot=self.slot)
         self.dot.setParentItem(self)
 
         self.setObjectName(self.dot.slot.path_name)
 
-        self.text = self.slot.name
-        self.text_color = TEXT_COLOR
-        self.text_align = Qt.AlignLeft
-
-        self.setAcceptDrops(True)
-        self.mime = QMimeData()
+    def update_pos(self):
+        self.dot.update_pos()
 
     def boundingRect(self):
         return self.input_rect
@@ -145,7 +169,10 @@ class SlotPySide(QGraphicsObject):
         painter.setPen(_color(self.text_color))
         painter.drawText(self.input_rect, self.text_align, self.text)
 
-
+    def mousePressEvent(self, event):
+        #super(SlotPySide, self).mousePressEvent(event)
+        print 'click'
+        print self.dot.dot_pos
 
 class InputSlotPySide(SlotPySide):
     def __init__(self,x,y,slot=InputSlot):

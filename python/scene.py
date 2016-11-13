@@ -51,9 +51,9 @@ class NodalScene(QGraphicsScene):
             self.edges[output_slot] = {input_slot: new_edge}
         else:
             self.edges[output_slot][input_slot] = new_edge
-        # Update
-        new_edge.implementation.update()  # Pyside Call !!
+        # Updat
         new_edge.implementation.setZValue(0)  # Pyside Call !!
+        new_edge.implementation.update()  # Pyside Call !!
 
     def delete_edge(self, input_slot, output_slot):
         # Find Edge
@@ -208,6 +208,7 @@ class NodalScene(QGraphicsScene):
 
     def from_document(self, document):
         # Each Node
+        z = 2
         for node_dict in document['nodes']:
             # Node
             node = Node(node_dict['name'], node_dict['caption'])
@@ -222,6 +223,7 @@ class NodalScene(QGraphicsScene):
             # Set
             node.set_inputs(input_slots)
 
+
             # Outputs
             output_slots = list()
             for output_dict in node_dict['output_slots']:
@@ -232,30 +234,32 @@ class NodalScene(QGraphicsScene):
             # Set
             node.set_outputs(output_slots)
 
-            # Position, Size, Color, Resizable
+            # Position, Size, Color, Resizable, zvalue
             node.set_position(*node_dict['position'])
             node.set_resizable(node_dict['is_resizable'])
             node.set_size(node_dict['size'][0], node_dict['size'][1])
             node.set_color(node_dict['color'][0], node_dict['color'][1], node_dict['color'][2])
-
             # Add
             self.add_node(node)
-
         # Each Connection
-        for connection_dict in document['connections']:
-            # Connect
-            source_node = self.nodes[connection_dict['origin_node_id']]
-            target_node = self.nodes[connection_dict['target_node_id']]
-            source_slot = source_node.output_slots[connection_dict['origin_slot_id']]
-            target_slot = target_node.input_slots[connection_dict['target_slot_id']]
-            source_slot.connect(target_slot)
+        # for connection_dict in document['connections']:
+        #     # Connect
+        #     source_node = self.nodes[connection_dict['origin_node_id']]
+        #     target_node = self.nodes[connection_dict['target_node_id']]
+        #     source_slot = source_node.output_slots[connection_dict['origin_slot_id']]
+        #     target_slot = target_node.input_slots[connection_dict['target_slot_id']]
+        #     source_slot.connect(target_slot)
 
     # Events
     def mousePressEvent(self, event):
         # Store mouse pos
         self._mouse_previous_position = event.scenePos()
+        for item in self.items():
+            item.setZValue(0)
         # Forward
         QGraphicsScene.mousePressEvent(self, event)
+
+
 
     def mouseMoveEvent(self, event):
         # If Drawing Edge
@@ -269,6 +273,18 @@ class NodalScene(QGraphicsScene):
                 origin = (self._mouse_previous_position.x(), self._mouse_previous_position.y())
                 target = (event.scenePos().x(), event.scenePos().y())
             # Update FreeEdge
-            self._drawing_edge.set_rectangle(origin, target)
+            #self._drawing_edge.set_rectangle(origin, target)
         # Forward
         QGraphicsScene.mouseMoveEvent(self, event)
+
+    def dragLeaveEvent(self, event):
+        super(NodalScene, self).dragLeaveEvent(event)
+        self.scene()._drawing_edge.set_rectangle(self.dot_pos, (event.scenePos().x(), event.scenePos().y()))
+
+    def dropEvent(self, event):
+        super(NodalScene, self).dropEvent(event)
+        self._leave_drawing_edge()
+
+    def dragMoveEvent(self, event):
+        super(NodalScene, self).dragMoveEvent(event)
+        self._drawing_edge.set_rectangle((self._mouse_previous_position.x(), self._mouse_previous_position.y()), (event.scenePos().x(), event.scenePos().y()))
