@@ -96,9 +96,6 @@ class NodePySide(QGraphicsItem):  # Move all geometry computations in upper clas
             self._rect.width(),
             ROW_HEIGHT
         )
-        print self.node.name
-        for s in self.node.input_slots:
-            print 'slot : ' + s.name
 
         for output_index, output in enumerate(self.node.output_slots):
             rect_labels.moveTop(HEADER_HEIGHT + 10 + output_index * ROW_HEIGHT)
@@ -117,25 +114,12 @@ class NodePySide(QGraphicsItem):  # Move all geometry computations in upper clas
             self._rect.width(),
             ROW_HEIGHT
         )
-        print self.node.name
-        for s in self.node.input_slots:
-            print 'slot : ' + s.name
         for input_index, input in enumerate(self.node.input_slots):
             rect_labels.moveTop(HEADER_HEIGHT + 10 + input_index * ROW_HEIGHT)
             input_ui = InputSlotPySide(rect_labels.x(), rect_labels.y(), slot=input)
             input_ui.input_rect.setX(SLOT_OFFSET + SLOT_RADIUS)
             input_ui.setParentItem(self)
             input.implementation = input_ui
-
-    # for output_index, output in enumerate(self.node.output_slots):
-    #     # Move Rect Label
-    #     rect_labels.moveTop(HEADER_HEIGHT + output_index * ROW_HEIGHT)
-    #     # Draw Text
-    #     painter.drawText(
-    #         rect_labels.adjusted(TEXT_PADDING, TEXT_PADDING, TEXT_PADDING - SLOT_RADIUS, -TEXT_PADDING),
-    #         Qt.AlignRight | Qt.AlignVCenter,
-    #         output.name
-    #     )
 
 
     def compute_geometry_values(self):
@@ -153,7 +137,7 @@ class NodePySide(QGraphicsItem):  # Move all geometry computations in upper clas
         height = max(self._min_height, self.node.size[1])
         self.node.size = (width, height)
         self._compute_rect()
-        #self._compute_handle_rects()
+        self._compute_handle_rects()
         #self._compute_input_rects()
         #self._compute_output_rects()
 
@@ -174,34 +158,34 @@ class NodePySide(QGraphicsItem):  # Move all geometry computations in upper clas
             -HANDLE_RADIUS
         )
 
-    # def _compute_handle_rects(self):
-    #     # If Resizable
-    #     if self.node.is_resizable:
-    #         # Compute
-    #         rect_tl = QRect(0, 0, HANDLE_RADIUS, HANDLE_RADIUS)
-    #         rect_tm = QRect(self._rect.width() / 2, 0, HANDLE_RADIUS, HANDLE_RADIUS)
-    #         rect_tr = QRect(self._rect.width(), 0, HANDLE_RADIUS, HANDLE_RADIUS)
-    #         rect_ml = QRect(0, self._rect.height() / 2, HANDLE_RADIUS, HANDLE_RADIUS)
-    #         rect_mr = QRect(self._rect.width(), self._rect.height() / 2, HANDLE_RADIUS, HANDLE_RADIUS)
-    #         rect_bl = QRect(0, self._rect.height(), HANDLE_RADIUS, HANDLE_RADIUS)
-    #         rect_bm = QRect(self._rect.width() / 2, self._rect.height(), HANDLE_RADIUS, HANDLE_RADIUS)
-    #         rect_br = QRect(self._rect.width(), self._rect.height(), HANDLE_RADIUS, HANDLE_RADIUS)
-    #
-    #         # Update Members
-    #         self._handle_rects = {
-    #             HANDLE_TOP_LEFT: rect_tl,
-    #             HANDLE_TOP_MIDDLE: rect_tm,
-    #             HANDLE_TOP_RIGHT: rect_tr,
-    #             HANDLE_MID_LEFT: rect_ml,
-    #             HANDLE_MID_RIGHT: rect_mr,
-    #             HANDLE_BOTTOM_LEFT: rect_bl,
-    #             HANDLE_BOTTOM_MIDDLE: rect_bm,
-    #             HANDLE_BOTTOM_RIGHT: rect_br
-    #         }
-    #
-    #     # Else, no
-    #     else:
-    #         self._handle_rects = dict()
+    def _compute_handle_rects(self):
+        # If Resizable
+        if self.node.is_resizable:
+            # Compute
+            rect_tl = QRect(0, 0, HANDLE_RADIUS, HANDLE_RADIUS)
+            rect_tm = QRect(self._rect.width() / 2, 0, HANDLE_RADIUS, HANDLE_RADIUS)
+            rect_tr = QRect(self._rect.width(), 0, HANDLE_RADIUS, HANDLE_RADIUS)
+            rect_ml = QRect(0, self._rect.height() / 2, HANDLE_RADIUS, HANDLE_RADIUS)
+            rect_mr = QRect(self._rect.width(), self._rect.height() / 2, HANDLE_RADIUS, HANDLE_RADIUS)
+            rect_bl = QRect(0, self._rect.height(), HANDLE_RADIUS, HANDLE_RADIUS)
+            rect_bm = QRect(self._rect.width() / 2, self._rect.height(), HANDLE_RADIUS, HANDLE_RADIUS)
+            rect_br = QRect(self._rect.width(), self._rect.height(), HANDLE_RADIUS, HANDLE_RADIUS)
+
+            # Update Members
+            self._handle_rects = {
+                HANDLE_TOP_LEFT: rect_tl,
+                HANDLE_TOP_MIDDLE: rect_tm,
+                HANDLE_TOP_RIGHT: rect_tr,
+                HANDLE_MID_LEFT: rect_ml,
+                HANDLE_MID_RIGHT: rect_mr,
+                HANDLE_BOTTOM_LEFT: rect_bl,
+                HANDLE_BOTTOM_MIDDLE: rect_bm,
+                HANDLE_BOTTOM_RIGHT: rect_br
+            }
+
+        # Else, no
+        else:
+            self._handle_rects = dict()
 
     # def _compute_input_rects(self):
     #     # Init
@@ -348,152 +332,156 @@ class NodePySide(QGraphicsItem):  # Move all geometry computations in upper clas
         #     painter.drawEllipse(slot_rect)
 
         # # Handles
-        # if self._is_mouse_over:
-        #     painter.setBrush(_color(HANDLE_COLOR))
-        #     painter.setPen(Qt.NoPen)
-        #     for handle_rect in self._handle_rects.values():
-        #         painter.drawEllipse(handle_rect)
+        if self._is_mouse_over:
+            painter.setBrush(_color(HANDLE_COLOR))
+            painter.setPen(Qt.NoPen)
+            for handle_rect in self._handle_rects.values():
+                painter.drawEllipse(handle_rect)
 
-    # def mousePressEvent(self, event):
-    #     # Update Members
-    #     self._previous_mouse_position = event.scenePos()
-    #     self._is_mouse_pressed = True
-    #
-    #     # If mouse on handle
-    #     self._handle_pressed = HANDLE_NONE
-    #     for handle_enum, handle_rect in self._handle_rects.items():
-    #         # If Pressed
-    #         if handle_rect.contains(int(event.pos().x()), int(event.pos().y())):
-    #             self._handle_pressed = handle_enum
-    #             break
-    #
-    #     # If mouse on input slot
-    #     if self._slot_input_hovered:
-    #         self.scene().input_slot_pressed(self._slot_input_hovered)
-    #
-    #     # If mouse on output slot
-    #     if self._slot_output_hovered:
-    #         self.scene().output_slot_pressed(self._slot_output_hovered)
-    #
-    #     # Forward
-    #     QGraphicsItem.mousePressEvent(self, event)
-    #
-    # def mouseReleaseEvent(self, event):
-    #     # Update Member
-    #     self._is_mouse_pressed = False
-    #     # Forward
-    #     QGraphicsItem.mouseReleaseEvent(self, event)
+    def mousePressEvent(self, event):
+        # Update Members
+        self._previous_mouse_position = event.scenePos()
+        self._is_mouse_pressed = True
 
-    # def mouseMoveEvent(self, event):
-    #     # If None
-    #     if self._handle_pressed is HANDLE_NONE and not self._slot_input_hovered and not self._slot_output_hovered:
-    #         # Forward
-    #         QGraphicsItem.mouseMoveEvent(self, event)
-    #         # Exit
-    #         return
-    #
-    #     # Prepare
-    #     self.prepareGeometryChange()
-    #
-    #     # Compute Deltas
-    #     delta_x = event.scenePos().x() - self._previous_mouse_position.x()
-    #     delta_y = event.scenePos().y() - self._previous_mouse_position.y()
-    #     # Copy Size Values
-    #     new_width = self.node.size[0]
-    #     new_height = self.node.size[1]
-    #     # Should move
-    #     is_moving_x = False
-    #     is_moving_y = False
-    #
-    #     if self._handle_pressed is HANDLE_TOP_LEFT:
-    #         # Resize
-    #         new_width -= delta_x
-    #         new_height -= delta_y
-    #         # Should Move
-    #         is_moving_x = True
-    #         is_moving_y = True
-    #
-    #     elif self._handle_pressed is HANDLE_TOP_MIDDLE:
-    #         # Resize
-    #         new_height -= delta_y
-    #         # Should Move on Y only
-    #         is_moving_y = True
-    #
-    #     elif self._handle_pressed is HANDLE_TOP_RIGHT:
-    #         # Resize
-    #         new_width += delta_x
-    #         new_height -= delta_y
-    #         # Should Move on Y only
-    #         is_moving_y = True
-    #
-    #     elif self._handle_pressed is HANDLE_MID_LEFT:
-    #         # Resize
-    #         new_width -= delta_x
-    #         # Should Move on X only
-    #         is_moving_x = True
-    #
-    #     elif self._handle_pressed is HANDLE_MID_RIGHT:
-    #         # Resize
-    #         new_width += delta_x
-    #
-    #     elif self._handle_pressed is HANDLE_BOTTOM_LEFT:
-    #         # Resize
-    #         new_width -= delta_x
-    #         new_height += delta_y
-    #         # Should Move on X only
-    #         is_moving_x = True
-    #
-    #     elif self._handle_pressed is HANDLE_BOTTOM_MIDDLE:
-    #         # Resize
-    #         new_height += delta_y
-    #
-    #     elif self._handle_pressed is HANDLE_BOTTOM_RIGHT:
-    #         # Resize
-    #         new_width += delta_x
-    #         new_height += delta_y
-    #
-    #     # Cancel if too small X
-    #     if new_width < self._min_width:
-    #         # Delta
-    #         delta_x = 0
-    #         # New Width
-    #         new_width = self.node.size[0]
-    #
-    #     # Cancel if too small Y
-    #     if new_height < self._min_height:
-    #         # Delta
-    #         delta_y = 0
-    #         # New Width
-    #         new_height = self.node.size[1]
-    #
-    #     # Resize
-    #     self.node.size = (new_width, new_height)
-    #
-    #     # If Should move
-    #     if is_moving_x:
-    #         self.moveBy(delta_x, 0)
-    #
-    #     if is_moving_y:
-    #         self.moveBy(0, delta_y)
-    #
-    #     # Update Mouse Position
-    #     self._previous_mouse_position.setX(self._previous_mouse_position.x() + delta_x)
-    #     self._previous_mouse_position.setY(self._previous_mouse_position.y() + delta_y)
-    #     # Compute New Geometry
-    #     self.compute_geometry_values()
+        # If mouse on handle
+        self._handle_pressed = HANDLE_NONE
+        for handle_enum, handle_rect in self._handle_rects.items():
+            # If Pressed
+            if handle_rect.contains(int(event.pos().x()), int(event.pos().y())):
+                self._handle_pressed = handle_enum
+                break
 
-    # def hoverEnterEvent(self, event):
-    #     # Set Member
-    #     self._is_mouse_over = True
-    #
-    # def hoverLeaveEvent(self, event):
-    #     # Reset Members
-    #     self._is_mouse_over = False
-    #     self._slot_input_hovered = ""
-    #     self._slot_output_hovered = ""
-    #     # Ask Redraw
-    #     self.prepareGeometryChange()
+        ##OSEF NOW
+        # # If mouse on input slot
+        # if self._slot_input_hovered:
+        #     self.scene().input_slot_pressed(self._slot_input_hovered)
+        #
+        # # If mouse on output slot
+        # if self._slot_output_hovered:
+        #     self.scene().output_slot_pressed(self._slot_output_hovered)
 
+        # Forward
+        QGraphicsItem.mousePressEvent(self, event)
+
+    def mouseReleaseEvent(self, event):
+        # Update Member
+        self._is_mouse_pressed = False
+        # Forward
+        QGraphicsItem.mouseReleaseEvent(self, event)
+
+    def mouseMoveEvent(self, event):
+        # If None
+        if self._handle_pressed is HANDLE_NONE and not self._slot_input_hovered and not self._slot_output_hovered:
+            # Forward
+            QGraphicsItem.mouseMoveEvent(self, event)
+            # Exit
+            return
+
+        # Prepare
+        self.prepareGeometryChange()
+
+        # Compute Deltas
+        delta_x = event.scenePos().x() - self._previous_mouse_position.x()
+        delta_y = event.scenePos().y() - self._previous_mouse_position.y()
+        # Copy Size Values
+        new_width = self.node.size[0]
+        new_height = self.node.size[1]
+        # Should move
+        is_moving_x = False
+        is_moving_y = False
+
+        if self._handle_pressed is HANDLE_TOP_LEFT:
+            # Resize
+            new_width -= delta_x
+            new_height -= delta_y
+            # Should Move
+            is_moving_x = True
+            is_moving_y = True
+
+        elif self._handle_pressed is HANDLE_TOP_MIDDLE:
+            # Resize
+            new_height -= delta_y
+            # Should Move on Y only
+            is_moving_y = True
+
+        elif self._handle_pressed is HANDLE_TOP_RIGHT:
+            # Resize
+            new_width += delta_x
+            new_height -= delta_y
+            # Should Move on Y only
+            is_moving_y = True
+
+        elif self._handle_pressed is HANDLE_MID_LEFT:
+            # Resize
+            new_width -= delta_x
+            # Should Move on X only
+            is_moving_x = True
+
+        elif self._handle_pressed is HANDLE_MID_RIGHT:
+            # Resize
+            new_width += delta_x
+
+        elif self._handle_pressed is HANDLE_BOTTOM_LEFT:
+            # Resize
+            new_width -= delta_x
+            new_height += delta_y
+            # Should Move on X only
+            is_moving_x = True
+
+        elif self._handle_pressed is HANDLE_BOTTOM_MIDDLE:
+            # Resize
+            new_height += delta_y
+
+        elif self._handle_pressed is HANDLE_BOTTOM_RIGHT:
+            # Resize
+            new_width += delta_x
+            new_height += delta_y
+
+        # Cancel if too small X
+        if new_width < self._min_width:
+            # Delta
+            delta_x = 0
+            # New Width
+            new_width = self.node.size[0]
+
+        # Cancel if too small Y
+        if new_height < self._min_height:
+            # Delta
+            delta_y = 0
+            # New Width
+            new_height = self.node.size[1]
+
+        # Resize
+        self.node.size = (new_width, new_height)
+
+        # If Should move
+        if is_moving_x:
+            self.moveBy(delta_x, 0)
+
+        if is_moving_y:
+            self.moveBy(0, delta_y)
+
+        # Update Mouse Position
+        self._previous_mouse_position.setX(self._previous_mouse_position.x() + delta_x)
+        self._previous_mouse_position.setY(self._previous_mouse_position.y() + delta_y)
+        # Compute New Geometry
+        self.compute_geometry_values()
+
+    def hoverEnterEvent(self, event):
+        super(NodePySide, self).hoverEnterEvent(event)
+        # Set Member
+        self._is_mouse_over = True
+
+    def hoverLeaveEvent(self, event):
+        super(NodePySide, self).hoverLeaveEvent(event)
+        # Reset Members
+        self._is_mouse_over = False
+        self._slot_input_hovered = ""
+        self._slot_output_hovered = ""
+        # Ask Redraw
+        self.prepareGeometryChange()
+
+    #OSEF NOW
     # def hoverMoveEvent(self, event):
     #     # If Over input
     #     is_over_input = False
@@ -534,6 +522,8 @@ class NodePySide(QGraphicsItem):  # Move all geometry computations in upper clas
     #
     #     # Ask Redraw
     #     self.prepareGeometryChange()
+
+    #OSEF NOW
     # def update_pos(self):
     #     #
     #     for input in self.node.input_slots:
