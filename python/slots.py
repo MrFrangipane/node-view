@@ -14,7 +14,6 @@ class AbstractSlot(object):
         self.position = (0, 0)
         self.connected_slots = list()
         self.connected_edges = list()
-        self.dot_pos = []
         self.connect_data = ''
 
         self.connect_to = ''

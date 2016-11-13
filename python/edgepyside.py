@@ -178,6 +178,8 @@ class ConnectingEdgePySide(QGraphicsItem):
             origin_color = QColor.fromRgbF(*self.edge.origin_slot.color).lighter()
             edge_color = QColor.fromRgbF(*EDGE_COLOR_SELECTED)
             target_color = QColor.fromRgbF(*self.edge.target_slot.color).lighter()
+            #set zvalue same has nodepyside
+            self.setZValue(self.edge.origin_slot.parent_node.implementation.zValue()-1)
         # Not Selected
         else:
             # Shadow Color

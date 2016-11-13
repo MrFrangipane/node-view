@@ -563,8 +563,3 @@ class NodePySide(QGraphicsItem):  # Move all geometry computations in upper clas
 
         # Forward
         return QGraphicsItem.itemChange(self, change, value)
-
-    def mousePressEvent(self, event):
-        super(NodePySide, self).mousePressEvent(event)
-        #on top when clicked
-        self.setZValue(100)

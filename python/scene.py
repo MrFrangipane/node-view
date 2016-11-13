@@ -1,11 +1,12 @@
 import logging
 from collections import OrderedDict
-from PySide.QtGui import QGraphicsScene
-from PySide.QtCore import QPoint
+from PySide.QtGui import *
+from PySide.QtCore import *
 from node import Node
 from edge import Edge
 from slots import InputSlot, OutputSlot
 from edgepyside import ConnectingEdgePySide, FreeEdgePySide
+from nodepyside import NodePySide
 
 
 class NodalScene(QGraphicsScene):
@@ -25,7 +26,7 @@ class NodalScene(QGraphicsScene):
         self.addItem(self._drawing_edge)
 
         self._mouse_previous_position = QPoint(0, 0)
-
+        
     def add_node(self, node):
         # Register as parent scene
         node.parent_scene = self
@@ -79,6 +80,7 @@ class NodalScene(QGraphicsScene):
                 edge.implementation.update()  # Pyside Call !!
 
     def input_slot_pressed(self, input_slot):
+
         # If not Drawing
         if not self._is_drawing_edge:
             # Store Slot
@@ -241,32 +243,22 @@ class NodalScene(QGraphicsScene):
             node.set_color(node_dict['color'][0], node_dict['color'][1], node_dict['color'][2])
             # Add
             self.add_node(node)
-        # Each Connection
-        # for connection_dict in document['connections']:
-        #     # Connect
-        #     source_node = self.nodes[connection_dict['origin_node_id']]
-        #     target_node = self.nodes[connection_dict['target_node_id']]
-        #     source_slot = source_node.output_slots[connection_dict['origin_slot_id']]
-        #     target_slot = target_node.input_slots[connection_dict['target_slot_id']]
-        #     source_slot.connect(target_slot)
+        #Each Connection
+        for connection_dict in document['connections']:
+            # Connect
+            source_node = self.nodes[connection_dict['origin_node_id']]
+            target_node = self.nodes[connection_dict['target_node_id']]
+            source_slot = source_node.output_slots[connection_dict['origin_slot_id']]
+            target_slot = target_node.input_slots[connection_dict['target_slot_id']]
+            source_slot.connect(target_slot)
 
     # Events
-    def mousePressEvent(self, event):
-        # Store mouse pos
-        self._mouse_previous_position = event.scenePos()
-        for item in self.items():
-            item.setZValue(0)
-        # Forward
-        QGraphicsScene.mousePressEvent(self, event)
-
     def dragLeaveEvent(self, event):
         super(NodalScene, self).dragLeaveEvent(event)
-        self.scene()._drawing_edge.set_rectangle(self.dot_pos, (event.scenePos().x(), event.scenePos().y()))
-
+        self._leave_drawing_edge()
     def dropEvent(self, event):
         super(NodalScene, self).dropEvent(event)
         self._leave_drawing_edge()
-
     def dragMoveEvent(self, event):
         super(NodalScene, self).dragMoveEvent(event)
         if self._is_drawing_edge:
@@ -278,4 +270,32 @@ class NodalScene(QGraphicsScene):
             else:
                 origin = (self._mouse_previous_position.x(), self._mouse_previous_position.y())
                 target = (event.scenePos().x(), event.scenePos().y())
-        self._drawing_edge.set_rectangle(origin, target)
+            self._drawing_edge.set_rectangle(origin, target)
+
+    def mousePressEvent(self, event):
+        super(NodalScene, self).mousePressEvent(event)
+        ##ZValue gestion
+        #init all zvalue
+        for item in self.items():
+            if isinstance(item, NodePySide):
+                item.setZValue(1)
+        #on top all selected node
+        item_at = self.itemAt(event.scenePos())
+        if isinstance(item_at, NodePySide):
+            item_at.setZValue(len(self.items())+1)
+            self._select_arbo_top_in(item_at)
+            self._select_arbo_top_out(item_at)
+        self.update()
+
+    def _select_arbo_top_in(self, nodepyside):
+        for slot in nodepyside.node.input_slots:
+            for input_slot in  slot.connected_slots:
+                print input_slot.parent_node.name
+                input_slot.parent_node.implementation.setZValue(len(self.items()))
+                self._select_arbo_top_in(input_slot.parent_node.implementation)
+
+    def _select_arbo_top_out(self, nodepyside):
+        for slot in nodepyside.node.output_slots:
+            for output_slot in slot.connected_slots:
+                output_slot.parent_node.implementation.setZValue(len(self.items()))
+                self._select_arbo_top_out(output_slot.parent_node.implementation)

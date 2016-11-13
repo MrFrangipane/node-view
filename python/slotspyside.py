@@ -42,6 +42,7 @@ HANDLE_BOTTOM_RIGHT = 8
 SLOT_RADIUS = 10
 SLOT_COLOR_HOVERED = TEXT_COLOR
 SLOT_FONT = QFont()
+
 def _color(values):
     return QColor.fromRgbF(*values)
 
@@ -66,6 +67,7 @@ class SlotDotPySide(QGraphicsItem):
         #update pos
         #self.update_pos()
 
+
     def update_pos(self):
         mapped_pos = self.mapToScene(self.input_rect)
         self.dot_pos = (mapped_pos.boundingRect().x() + SLOT_RADIUS / 2.0, mapped_pos.boundingRect().y() + SLOT_RADIUS / 2.0)
@@ -85,11 +87,26 @@ class SlotDotPySide(QGraphicsItem):
         self.mimePos.setData('Pos', itemData)
         #Mime Data path name
         self.mimePos.setText(self.slot.path_name)
+        #set click pos to scene
+        self.scene()._mouse_previous_position = event.scenePos()
+        #edge free creation
+        if isinstance(self.parentItem(), InputSlotPySide):
+            self.scene().input_slot_pressed(self.slot)
+        if isinstance(self.parentItem(), OutputSlotPySide):
+            self.scene().output_slot_pressed(self.slot)
 
-        self.scene().input_slot_pressed(self.slot)
+
+    def mouseReleaseEvent(self, event):
+        self.scene()._leave_drawing_edge()
 
     def dragEnterEvent(self, event):
         event.setAccepted(True)
+        self._slot_input_hovered = True
+        self.prepareGeometryChange()
+
+    def dragLeaveEvent(self, event):
+        self._slot_input_hovered = False
+        self.prepareGeometryChange()
 
     def dropEvent(self, event):
         self.dragOver = False
@@ -112,8 +129,8 @@ class SlotDotPySide(QGraphicsItem):
             return
         drag = QDrag(event.widget())
         drag.setMimeData(self.mimePos)
-        drag.exec_()
-
+        drag.setPixmap(QPixmap(1,1))
+        drag.exec_(Qt.IgnoreAction)
 
     def eval_connection_slot(self):
         for item in self.scene().items():
@@ -172,17 +189,24 @@ class SlotPySide(QGraphicsObject):
     def mousePressEvent(self, event):
         #super(SlotPySide, self).mousePressEvent(event)
         print 'click'
-        print self.dot.dot_pos
+        print self.slot.name
 
 class InputSlotPySide(SlotPySide):
     def __init__(self,x,y,slot=InputSlot):
         super(InputSlotPySide, self).__init__(x, y, slot=slot)
         self.x = 0
-        self.dot.color_brush = BRUSH_INPUTSLOT_COLOR
+        self.dot.color_brush = self.slot.color
+        print self.scene()
+        #self.dot._slot_clicked = self.scene().input_slot_pressed
 
 class OutputSlotPySide(SlotPySide):
     def __init__(self,x,y,slot=InputSlot):
         super(OutputSlotPySide, self).__init__(x, y, slot=slot)
+        self.input_rect = QRect(self.x, self.y, WIDTH, ROW_HEIGHT)
         self.dot.setPos(WIDTH,0)
-        self.dot.color_brush = BRUSH_OUTPUTSLOT_COLOR
+        self.dot.color_brush = self.slot.color
         self.text_align = Qt.AlignRight
+
+    def boundingRect(self):
+        return QRect(self.x + 50, self.y, WIDTH - 50 , ROW_HEIGHT)
+
