@@ -42,8 +42,6 @@ class Node(object):
         # Register as parent Node
         for output in self.output_slots:
             output.parent_node = self
-        # Update Delegate
-        print 'compute_geom'
         self.implementation.compute_geometry_values()
         self.implementation.add_output_slots()
 
