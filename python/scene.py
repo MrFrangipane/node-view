@@ -259,24 +259,6 @@ class NodalScene(QGraphicsScene):
         # Forward
         QGraphicsScene.mousePressEvent(self, event)
 
-
-
-    def mouseMoveEvent(self, event):
-        # If Drawing Edge
-        if self._is_drawing_edge:
-            # If input to output
-            if isinstance(self._source_slot, OutputSlot):
-                origin = (event.scenePos().x(), event.scenePos().y())
-                target = (self._mouse_previous_position.x(), self._mouse_previous_position.y())
-            # Output to input
-            else:
-                origin = (self._mouse_previous_position.x(), self._mouse_previous_position.y())
-                target = (event.scenePos().x(), event.scenePos().y())
-            # Update FreeEdge
-            #self._drawing_edge.set_rectangle(origin, target)
-        # Forward
-        QGraphicsScene.mouseMoveEvent(self, event)
-
     def dragLeaveEvent(self, event):
         super(NodalScene, self).dragLeaveEvent(event)
         self.scene()._drawing_edge.set_rectangle(self.dot_pos, (event.scenePos().x(), event.scenePos().y()))
@@ -287,4 +269,13 @@ class NodalScene(QGraphicsScene):
 
     def dragMoveEvent(self, event):
         super(NodalScene, self).dragMoveEvent(event)
-        self._drawing_edge.set_rectangle((self._mouse_previous_position.x(), self._mouse_previous_position.y()), (event.scenePos().x(), event.scenePos().y()))
+        if self._is_drawing_edge:
+            # If input to output
+            if isinstance(self._source_slot, OutputSlot):
+                origin = (event.scenePos().x(), event.scenePos().y())
+                target = (self._mouse_previous_position.x(), self._mouse_previous_position.y())
+            # Output to input
+            else:
+                origin = (self._mouse_previous_position.x(), self._mouse_previous_position.y())
+                target = (event.scenePos().x(), event.scenePos().y())
+        self._drawing_edge.set_rectangle(origin, target)
