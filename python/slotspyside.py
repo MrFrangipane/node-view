@@ -6,7 +6,6 @@ from PySide.QtCore import *
 from slots import *
 
 WIDTH = 200
-HEADER_HEIGHT = 40
 ROW_HEIGHT = 25
 
 BACKGROUND_COLOR = (.22, .22, .22, 1)
@@ -14,40 +13,31 @@ FRAME_SLOT_COLOR = (0, 0, 0)
 BRUSH_INPUTSLOT_COLOR = (1, 0.5, 1)
 BRUSH_OUTPUTSLOT_COLOR = (0.5, 1, 1)
 
-SHADOW_COLOR = (1, 1, 1, .1)
-SHADOW_RADIUS = 15
-
-HANDLE_RADIUS = 7
-HANDLE_COLOR = (1, 1, 1)
-
 NAME_FONT = QFont()
 NAME_FONT.setBold(True)
-CAPTION_FONT = QFont()
-CAPTION_FONT.setItalic(True)
-CAPTION_OPACITY = .75
 TEXT_COLOR = (1, 1, 1)
-TEXT_PADDING = 4
-TEXT_DOT_PADDING = 12
-
-HANDLE_NONE = 0
-HANDLE_TOP_LEFT = 1
-HANDLE_TOP_MIDDLE = 2
-HANDLE_TOP_RIGHT = 3
-HANDLE_MID_LEFT = 4
-HANDLE_MID_RIGHT = 5
-HANDLE_BOTTOM_LEFT = 6
-HANDLE_BOTTOM_MIDDLE = 7
-HANDLE_BOTTOM_RIGHT = 8
 
 SLOT_RADIUS = 10
 SLOT_COLOR_HOVERED = TEXT_COLOR
-SLOT_FONT = QFont()
 
 def _color(values):
+    """
+    Convert rgb value to hex color
+    :param values: color as (r, g, b)
+    :type values: tuple
+    :return: QColor
+    """
     return QColor.fromRgbF(*values)
 
 class SlotDotPySide(QGraphicsItem):
     def __init__(self,x=0 ,y=0, slot=None, parent=None):
+        """
+        UI object it's the dot who manage connection, usually parent to SlotPySide objet. It manage drag and drop mode too
+        :param x: x position
+        :param y: y position
+        :param slot: the Slot object from slots module passing from SlotPySide
+        :param parent: it's parent item
+        """
         super(SlotDotPySide, self).__init__()
         #args
         self.x = x
@@ -64,29 +54,31 @@ class SlotDotPySide(QGraphicsItem):
         #setflag pour hover et drops
         self.setAcceptHoverEvents(True)
         self.setAcceptDrops(True)
-        #update pos
-        #self.update_pos()
-
 
     def update_pos(self):
+        """
+        update dot pos
+        :return: None
+        """
         mapped_pos = self.mapToScene(self.input_rect)
-        self.dot_pos = (mapped_pos.boundingRect().x() + SLOT_RADIUS / 2.0, mapped_pos.boundingRect().y() + SLOT_RADIUS / 2.0)
+        self.dot_pos = (mapped_pos.boundingRect().x() + SLOT_RADIUS / 2.0,
+                        mapped_pos.boundingRect().y() + SLOT_RADIUS / 2.0)
 
+    #PySide def
     def boundingRect(self):
         return self.input_rect
 
     def mousePressEvent(self, event):
-        #super(SlotDotPySide, self).mousePressEvent(event)
+        #check left button
         if event.button() != Qt.LeftButton:
             event.ignore()
             return
+        #mimeData creation for drag data
         self.mimePos = QMimeData()
-        itemData = QByteArray()
-        dataStream = QDataStream(itemData, QIODevice.WriteOnly)
-        dataStream << QPointF(self.scenePos())
-        self.mimePos.setData('Pos', itemData)
         #Mime Data path name
         self.mimePos.setText(self.slot.path_name)
+
+        ##Warn Scene
         #set click pos to scene
         self.scene()._mouse_previous_position = event.scenePos()
         #edge free creation
@@ -95,72 +87,80 @@ class SlotDotPySide(QGraphicsItem):
         if isinstance(self.parentItem(), OutputSlotPySide):
             self.scene().output_slot_pressed(self.slot)
 
-
     def mouseReleaseEvent(self, event):
+        ##Warn scene
+        #leave freeedge at release on dot
         self.scene()._leave_drawing_edge()
 
     def dragEnterEvent(self, event):
         event.setAccepted(True)
+        #set hovered color during drag
         self._slot_input_hovered = True
         self.prepareGeometryChange()
 
     def dragLeaveEvent(self, event):
+        #back color from hovered during drag
         self._slot_input_hovered = False
         self.prepareGeometryChange()
 
     def dropEvent(self, event):
-        self.dragOver = False
+        #assign path name from mimeData dropped to connect_to
         self.slot.connect_to = event.mimeData().text()
-        print 'path:'
-        print event.mimeData().text()
-        #TMP #Get MimeData position
-        pos = QPointF()
-        itemData = event.mimeData().data('Pos')
-        dataStream = QDataStream(itemData, QIODevice.ReadOnly)
-        dataStream >> pos
-        print pos
-        print 'Dropped'
+        #Call def for do connection
         self.eval_connection_slot()
 
     def mouseMoveEvent(self, event):
         super(SlotDotPySide, self).mouseMoveEvent(event)
+        #begin drag at this condition
         if QLineF(QPointF(event.screenPos()), QPointF(
                 event.buttonDownScreenPos(Qt.LeftButton))).length() < QApplication.startDragDistance():
             return
+        #create drag object and store mmimeData on it
         drag = QDrag(event.widget())
         drag.setMimeData(self.mimePos)
         drag.setPixmap(QPixmap(1,1))
         drag.exec_(Qt.IgnoreAction)
 
     def eval_connection_slot(self):
+        #TMP
+        #search the right slot item
         for item in self.scene().items():
             if isinstance(item, SlotPySide):
                 if item.objectName() == self.slot.connect_to:
-                    print 'try connect'
+                    #connect them
                     self.slot.connect(item.slot)
+                    #exit
                     break
-        #MARCHE PAS JE SAIS PAS POURQUOIIII :
+        #MARCHE PAS JE SAIS PAS POURQUOI:
         #print self.scene().findChild(InputSlotPySide, self.slot.connect_to)
 
     def hoverMoveEvent(self, event):
+        #hovered without drag
         self._slot_input_hovered = True
         self.prepareGeometryChange()
 
     def hoverLeaveEvent(self, event):
+        #leave hovered without drag
         self._slot_input_hovered = False
         self.prepareGeometryChange()
 
     def paint(self, painter, option, widget):
+        #do paint
         painter.setPen(_color(self.color_pen))
         painter.setBrush(_color(self.color_brush))
+        #paint hovered
         if self._slot_input_hovered:
             painter.setBrush(_color((1, 1, 1)))
         painter.drawEllipse(self.input_rect)
 
-
-
 class SlotPySide(QGraphicsObject):
     def __init__(self, x, y, slot=AbstractSlot):
+        """
+        BaseUI class for InputSlotPySide and OutPutSlotPySide.
+        :param x:
+        :param y:
+        :param slot:
+        """
         super(SlotPySide, self).__init__()
         self.x = x
         self.y = y
@@ -177,6 +177,7 @@ class SlotPySide(QGraphicsObject):
         self.setObjectName(self.dot.slot.path_name)
 
     def update_pos(self):
+        #update dot position
         self.dot.update_pos()
 
     def boundingRect(self):
@@ -186,27 +187,37 @@ class SlotPySide(QGraphicsObject):
         painter.setPen(_color(self.text_color))
         painter.drawText(self.input_rect, self.text_align, self.text)
 
-    def mousePressEvent(self, event):
-        #super(SlotPySide, self).mousePressEvent(event)
-        print 'click'
-        print self.slot.name
-
 class InputSlotPySide(SlotPySide):
     def __init__(self,x,y,slot=InputSlot):
+        """
+        UI Slot derive from SlotPySide, set specifics values form input slot only
+        :param x: x pos
+        :param y: y pos
+        :param slot: slot object from slots module
+        """
         super(InputSlotPySide, self).__init__(x, y, slot=slot)
+        #force to 0
         self.x = 0
+        #change color
         self.dot.color_brush = self.slot.color
-        print self.scene()
-        #self.dot._slot_clicked = self.scene().input_slot_pressed
 
 class OutputSlotPySide(SlotPySide):
     def __init__(self,x,y,slot=InputSlot):
+        """
+        UI Slot derive from SlotPySide, set specifics values form output slot only
+        :param x: x pos
+        :param y: y pos
+        :param slot: slot object from slots module
+        """
         super(OutputSlotPySide, self).__init__(x, y, slot=slot)
-        self.input_rect = QRect(self.x, self.y, WIDTH, ROW_HEIGHT)
+        #move dot position
         self.dot.setPos(WIDTH,0)
+        #change color
         self.dot.color_brush = self.slot.color
+        #switch align text to right
         self.text_align = Qt.AlignRight
 
     def boundingRect(self):
+        #tweak bounding rect for get right rect and extra out side
         return QRect(self.x + 50, self.y, WIDTH - 50 , ROW_HEIGHT)
 
