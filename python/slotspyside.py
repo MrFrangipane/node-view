@@ -1,5 +1,3 @@
-import pickle
-import tempfile
 from PySide.QtGui import *
 from PySide.QtCore import *
 
