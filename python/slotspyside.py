@@ -55,6 +55,7 @@ class SlotDotPySide(QGraphicsItem):
         self.setAcceptHoverEvents(True)
         self.setAcceptDrops(True)
 
+
     def update_pos(self):
         """
         update dot pos
@@ -63,6 +64,24 @@ class SlotDotPySide(QGraphicsItem):
         mapped_pos = self.mapToScene(self.input_rect)
         self.dot_pos = (mapped_pos.boundingRect().x() + SLOT_RADIUS / 2.0,
                         mapped_pos.boundingRect().y() + SLOT_RADIUS / 2.0)
+
+
+    def eval_connection_slot(self):
+        """
+        Get and connect drop slot object to the target slot
+        :return: None
+        """
+        #TMP
+        #search the right slot item
+        for item in self.scene().items():
+            if isinstance(item, SlotPySide):
+                if item.objectName() == self.slot.connect_to:
+                    #connect them
+                    self.slot.connect(item.slot)
+                    #exit
+                    break
+        #MARCHE PAS JE SAIS PAS POURQUOI:
+        #print self.scene().findChild(InputSlotPySide, self.slot.connect_to)
 
     #PySide def
     def boundingRect(self):
@@ -121,19 +140,6 @@ class SlotDotPySide(QGraphicsItem):
         drag.setPixmap(QPixmap(1,1))
         drag.exec_(Qt.IgnoreAction)
 
-    def eval_connection_slot(self):
-        #TMP
-        #search the right slot item
-        for item in self.scene().items():
-            if isinstance(item, SlotPySide):
-                if item.objectName() == self.slot.connect_to:
-                    #connect them
-                    self.slot.connect(item.slot)
-                    #exit
-                    break
-        #MARCHE PAS JE SAIS PAS POURQUOI:
-        #print self.scene().findChild(InputSlotPySide, self.slot.connect_to)
-
     def hoverMoveEvent(self, event):
         #hovered without drag
         self._slot_input_hovered = True
@@ -173,13 +179,14 @@ class SlotPySide(QGraphicsObject):
         #dot object
         self.dot = SlotDotPySide(self.input_rect.x(), self.input_rect.y()+1, slot=self.slot)
         self.dot.setParentItem(self)
-
+        #set object name with its path
         self.setObjectName(self.dot.slot.path_name)
 
     def update_pos(self):
         #update dot position
         self.dot.update_pos()
 
+    #PySide Def
     def boundingRect(self):
         return self.input_rect
 
@@ -217,6 +224,7 @@ class OutputSlotPySide(SlotPySide):
         #switch align text to right
         self.text_align = Qt.AlignRight
 
+    #PySide Def
     def boundingRect(self):
         #tweak bounding rect for get right rect and extra out side
         return QRect(self.x + 50, self.y, WIDTH - 50 , ROW_HEIGHT)
