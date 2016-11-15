@@ -299,9 +299,11 @@ class NodePySide(QGraphicsItem):  # Move all geometry computations in upper clas
     def mouseMoveEvent(self, event):
         # If None
         if self._handle_pressed is HANDLE_NONE:
+            super(NodePySide, self).mouseMoveEvent(event)
             # Forward
-            QGraphicsItem.mouseMoveEvent(self, event)
+            #QGraphicsItem.mouseMoveEvent(self, event)
             # Exit
+            #return
             return
         # Prepare
         self.prepareGeometryChange()
@@ -394,8 +396,9 @@ class NodePySide(QGraphicsItem):  # Move all geometry computations in upper clas
     def itemChange(self, change, value):
         # If Moved
         if self.scene() and change in [QGraphicsItem.ItemPositionChange, QGraphicsItem.ItemPositionHasChanged]:
-            # Update Node's ans Slots's position
+            #Update Node's ans Slots's position
             self.node.position = (self.pos().x(), self.pos().y())
+            #update pos attribute in slots
             for input in self.node.input_slots:
                 input.implementation.update_pos()
             for output in self.node.output_slots:
