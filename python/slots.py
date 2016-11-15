@@ -44,13 +44,20 @@ class InputSlot(AbstractSlot):
         assert isinstance(output_slot, OutputSlot), "Connect Input to output only !"
         #loop breaker
         def sss(node):
+            sss.looped = None
             for slot in node.input_slots:
+                if len(slot.connected_slots) == 0:
+                    continue
                 for output_slot in slot.connected_slots:
+                    print output_slot.parent_node.name
                     if output_slot.parent_node == self.parent_node:
-                        return True
-                    return sss(output_slot.parent_node)
-        loop = sss(output_slot.parent_node)
-        if loop:
+                        sss.looped = True
+                    else:
+                        sss.looped = False
+                        sss(output_slot.parent_node)
+
+        sss(output_slot.parent_node)
+        if sss.looped:
             print 'looped'
             return
         # If already connected
@@ -97,17 +104,25 @@ class OutputSlot(AbstractSlot):
         :param output_slot: output slot
         :return: None
         """
+        print 'out caca'
         # Assert Type
         assert isinstance(input_slot, InputSlot), "Connect Output to input only !"
         #loop breaker
         def sss(node):
+            sss.looped = None
             for slot in node.output_slots:
+                if len(slot.connected_slots) == 0:
+                    continue
                 for output_slot in slot.connected_slots:
+                    print output_slot.parent_node.name
                     if output_slot.parent_node == self.parent_node:
-                        return True
-                    return sss(output_slot.parent_node)
-        loop = sss(input_slot.parent_node)
-        if loop:
+                        sss.looped = True
+                    else:
+                        sss.looped = False
+                        sss(output_slot.parent_node)
+
+        sss(input_slot.parent_node)
+        if sss.looped:
             print 'looped'
             return
         # If already connected
