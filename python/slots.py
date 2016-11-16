@@ -49,7 +49,6 @@ class InputSlot(AbstractSlot):
                 if len(slot.connected_slots) == 0:
                     continue
                 for output_slot in slot.connected_slots:
-                    print output_slot.parent_node.name
                     if output_slot.parent_node == self.parent_node:
                         sss.looped = True
                     else:
@@ -104,7 +103,6 @@ class OutputSlot(AbstractSlot):
         :param output_slot: output slot
         :return: None
         """
-        print 'out caca'
         # Assert Type
         assert isinstance(input_slot, InputSlot), "Connect Output to input only !"
         #loop breaker
@@ -114,7 +112,6 @@ class OutputSlot(AbstractSlot):
                 if len(slot.connected_slots) == 0:
                     continue
                 for output_slot in slot.connected_slots:
-                    print output_slot.parent_node.name
                     if output_slot.parent_node == self.parent_node:
                         sss.looped = True
                     else:
