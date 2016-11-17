@@ -10,24 +10,38 @@ from nodepyside import NodePySide
 
 
 class NodalScene(QGraphicsScene):
-
     def __init__(self, parent=None):
+        """
+        holder for manage graphicsitem, node, slot, backdrop...
+        :param parent:
+        """
         QGraphicsScene.__init__(self, parent)
+        #attributes
+        #nodes listes
         self.nodes = list()
+        #edges listes
         self.edges = dict()
-
+        #slot handler
         self._source_slot = None
-
+        #drawing edge bool for visibility or not
         self._is_drawing_edge = False
-
+        #free edge object (drawing edge)
         self._drawing_edge = FreeEdgePySide()
         self._drawing_edge.setVisible(False)
         self._drawing_edge.setZValue(len(self.items()))
         self.addItem(self._drawing_edge)
-
+        #mouse pos handler
         self._mouse_previous_position = QPoint(0, 0)
-        
+
+
+
     def add_node(self, node):
+        """
+        Add a node to th scene
+        :param node: node as Node object
+        :type node: Node
+        :return: None
+        """
         # Register as parent scene
         node.parent_scene = self
         # Add
@@ -41,6 +55,14 @@ class NodalScene(QGraphicsScene):
         ))
 
     def new_edge(self, input_slot, output_slot):
+        """
+        Create a new edge connection between two slots.
+        :param input_slot: input slot
+        :type input_slot: InputSlot
+        :param output_slot: output slot to connect
+        :type output_slot: OutputSlot
+        :return: Edge
+        """
         # New Edge
         new_edge = Edge(output_slot, input_slot, parent_scene=self, implementation_class=ConnectingEdgePySide)
         # Update Slots
@@ -55,8 +77,18 @@ class NodalScene(QGraphicsScene):
         # Updat
         new_edge.implementation.setZValue(0)  # Pyside Call !!
         new_edge.implementation.update()  # Pyside Call !!
+        #Return edge object
+        return new_edge
 
     def delete_edge(self, input_slot, output_slot):
+        """
+        rdelete an edge between two slots
+        :param input_slot: input slot
+        :type input_slot: InputSlot
+        :param output_slot: output slot to connect
+        :type output_slot: OutputSlot
+        :return: None
+        """
         # Find Edge
         edge = self.edges[output_slot][input_slot]
         # Remove Key
@@ -65,6 +97,11 @@ class NodalScene(QGraphicsScene):
         self.removeItem(edge.implementation)
 
     def node_changed(self, node):  # Should be optimized !!
+        """
+        Update all edges of nodes in scene
+        :param node: edge's node to update
+        :return: None
+        """
         # Each Input
         for input_slot in node.input_slots:
             # Each Edge
@@ -80,7 +117,11 @@ class NodalScene(QGraphicsScene):
                 edge.implementation.update()  # Pyside Call !!
 
     def input_slot_pressed(self, input_slot):
-
+        """
+        start to draw an freeedge with drag
+        :param input_slot: the input slot clicked
+        :return: None
+        """
         # If not Drawing
         if not self._is_drawing_edge:
             # Store Slot
@@ -88,16 +129,12 @@ class NodalScene(QGraphicsScene):
             # Enter Drawing
             self._enter_drawing_edge()
 
-        # If Drawing
-        else:
-            # If Source is output
-            if isinstance(self._source_slot, OutputSlot):
-                # Connect
-                self._source_slot.connect(input_slot)
-            # Stop Drawing
-            self._leave_drawing_edge()
-
     def output_slot_pressed(self, output_slot):
+        """
+        start to draw an freeedge with drag
+        :param output_slot: the output slot clicked
+        :return: None
+        """
         # If not Drawing
         if not self._is_drawing_edge:
             # Store Slot
@@ -105,26 +142,34 @@ class NodalScene(QGraphicsScene):
             # Enter Drawing
             self._enter_drawing_edge()
 
-            # If Drawing
-        else:
-            # If Source is output
-            if isinstance(self._source_slot, InputSlot):
-                # Connect
-                output_slot.connect(self._source_slot)
-            # Stop Drawing
-            self._leave_drawing_edge()
-
     def delete_pressed(self):
+        """
+        def call by del keys for  delete selected edges
+        :return: None
+        """
         # Each Item
         edges = [item for item in self.selectedItems() if isinstance(item, ConnectingEdgePySide)]
         for edge in edges:
             # Disconnect
-            origin_slot = edge.edge.origin_slot
-            target_slot = edge.edge.target_slot
-            origin_slot.disconnect(target_slot)
+            self.del_edge(edge)
+
+    def del_edge(self, edge):
+        """
+        delete edges
+        :param edge: Edge
+        :return: None
+        """
+        # Disconnect
+        origin_slot = edge.edge.origin_slot
+        target_slot = edge.edge.target_slot
+        origin_slot.disconnect(target_slot)
 
     # Edge Drawing
     def _enter_drawing_edge(self):
+        """
+        initialise the free drawing edge, set pos and pass visibility
+        :return: None
+        """
         # Init Rectangle
         self._drawing_edge.set_rectangle(
             (self._mouse_previous_position.x(), self._mouse_previous_position.y()),
@@ -137,6 +182,10 @@ class NodalScene(QGraphicsScene):
         self._is_drawing_edge = True
 
     def _leave_drawing_edge(self):
+        """
+        disabled the free drawing edge, by pass visibility False
+        :return:
+        """
         # Hide Drawing Edge
         self._drawing_edge.setVisible(False)
         # Set member
@@ -252,15 +301,52 @@ class NodalScene(QGraphicsScene):
             target_slot = target_node.input_slots[connection_dict['target_slot_id']]
             source_slot.connect(target_slot)
 
+    def _select_arbo_top_in(self, nodepyside):
+        """
+        recursive def from input for select all branche and put it on front
+        :param nodepyside: Selected node
+        :type nodepyside: NodePySide
+        :return: None
+        """
+        try:
+            for slot in nodepyside.node.input_slots:
+                for input_slot in slot.connected_slots:
+                    input_slot.parent_node.implementation.setZValue(len(self.items()))
+                    self._select_arbo_top_in(input_slot.parent_node.implementation)
+        except RuntimeError:
+            print 'Loop...'
+            return
+
+    def _select_arbo_top_out(self, nodepyside):
+        """
+        recursive def from output for select all branche and put it on front
+        :param nodepyside: Selected node
+        :type nodepyside: NodePySide
+        :return: None
+        """
+        try:
+            for slot in nodepyside.node.output_slots:
+                for output_slot in slot.connected_slots:
+                    output_slot.parent_node.implementation.setZValue(len(self.items()))
+                    self._select_arbo_top_out(output_slot.parent_node.implementation)
+        except RuntimeError:
+            print 'Loop...'
+            return
+    #PySide
     # Events
     def dragLeaveEvent(self, event):
         super(NodalScene, self).dragLeaveEvent(event)
+        #leave free edge when drop or drag out
         self._leave_drawing_edge()
+
     def dropEvent(self, event):
         super(NodalScene, self).dropEvent(event)
+        #leave free edge when drop or drag out
         self._leave_drawing_edge()
+
     def dragMoveEvent(self, event):
         super(NodalScene, self).dragMoveEvent(event)
+        #create the free drawing edge
         if self._is_drawing_edge:
             # If input to output
             if isinstance(self._source_slot, OutputSlot):
@@ -285,17 +371,3 @@ class NodalScene(QGraphicsScene):
             item_at.setZValue(len(self.items())+1)
             self._select_arbo_top_in(item_at)
             self._select_arbo_top_out(item_at)
-        self.update()
-
-    def _select_arbo_top_in(self, nodepyside):
-        for slot in nodepyside.node.input_slots:
-            for input_slot in  slot.connected_slots:
-                print input_slot.parent_node.name
-                input_slot.parent_node.implementation.setZValue(len(self.items()))
-                self._select_arbo_top_in(input_slot.parent_node.implementation)
-
-    def _select_arbo_top_out(self, nodepyside):
-        for slot in nodepyside.node.output_slots:
-            for output_slot in slot.connected_slots:
-                output_slot.parent_node.implementation.setZValue(len(self.items()))
-                self._select_arbo_top_out(output_slot.parent_node.implementation)
