@@ -6,7 +6,7 @@ from node import Node
 from edge import Edge
 from slots import InputSlot, OutputSlot
 from edgepyside import ConnectingEdgePySide, FreeEdgePySide
-from nodepyside import NodePySide
+from nodepyside import NodePySide, BackDropPySide
 
 
 class NodalScene(QGraphicsScene):
@@ -286,6 +286,10 @@ class NodalScene(QGraphicsScene):
             node.set_outputs(output_slots)
 
             # Position, Size, Color, Resizable, zvalue
+            #wip
+            if node_dict['is_resizable']:
+                backdrop = BackDropPySide(node)
+                node.implementation = backdrop
             node.set_position(*node_dict['position'])
             node.set_resizable(node_dict['is_resizable'])
             node.set_size(node_dict['size'][0], node_dict['size'][1])
@@ -363,7 +367,11 @@ class NodalScene(QGraphicsScene):
         ##ZValue gestion
         #init all zvalue
         for item in self.items():
-            if isinstance(item, NodePySide):
+            if type(item) ==  NodePySide:
+                item.setZValue(2)
+            elif type(item) == BackDropPySide:
+                item.setZValue(0)
+            else:
                 item.setZValue(1)
         #on top all selected node
         item_at = self.itemAt(event.scenePos())
