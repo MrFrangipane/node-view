@@ -415,3 +415,9 @@ class NodePySide(QGraphicsItem):  # Move all geometry computations in upper clas
             self.shadow.setColor(QColor.fromRgbF(*SHADOW_COLOR))
         # Forward
         return QGraphicsItem.itemChange(self, change, value)
+
+#Wip
+class BackDropPySide(NodePySide):
+    def __init__(self, node, parent=None):
+        super(BackDropPySide, self).__init__(node, parent=None)
+        pass
