@@ -420,9 +420,11 @@ class NodePySide(QGraphicsItem):  # Move all geometry computations in upper clas
 class BackDropPySide(NodePySide):
     def __init__(self, node, parent=None):
         super(BackDropPySide, self).__init__(node, parent=None)
-        pass
+        self.back_rect = self.mapToScene(self.boundingRect())
+
 
     def mousePressEvent(self, event):
         super(BackDropPySide, self).mousePressEvent(event)
         #fix zvalue background
         self.setZValue(0)
+        self.back_rect = self.mapToScene(self.boundingRect())

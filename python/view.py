@@ -42,6 +42,7 @@ class NodalView(QGraphicsView):
         QGraphicsView.mouseMoveEvent(self, event)
 
     def keyPressEvent(self, event):
+        self.scene().key_pressed = event.key()
         if event.key() == Qt.Key_Delete:
             # Warn Scene
             self.scene().delete_pressed()
@@ -54,6 +55,7 @@ class NodalView(QGraphicsView):
 
     def keyReleaseEvent(self, event):
         super(NodalView, self).keyReleaseEvent(event)
+        self.scene().key_pressed = None
         if event.key() == Qt.Key_Alt:
             self.setDragMode(QGraphicsView.RubberBandDrag)
 

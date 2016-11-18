@@ -32,6 +32,8 @@ class NodalScene(QGraphicsScene):
         self.addItem(self._drawing_edge)
         #mouse pos handler
         self._mouse_previous_position = QPoint(0, 0)
+        #key pressed
+        self.key_pressed = None
 
 
 
@@ -315,7 +317,10 @@ class NodalScene(QGraphicsScene):
         try:
             for slot in nodepyside.node.input_slots:
                 for input_slot in slot.connected_slots:
-                    input_slot.parent_node.implementation.setZValue(len(self.items()))
+                    input_slot.parent_node.implementation.setZValue(len(self.items())+1)
+                    for slot in input_slot.parent_node.input_slots:
+                        for edge in slot.connected_edges:
+                            edge.implementation.setZValue(len(self.items())-1)
                     self._select_arbo_top_in(input_slot.parent_node.implementation)
         except RuntimeError:
             print 'Loop...'
@@ -331,7 +336,10 @@ class NodalScene(QGraphicsScene):
         try:
             for slot in nodepyside.node.output_slots:
                 for output_slot in slot.connected_slots:
-                    output_slot.parent_node.implementation.setZValue(len(self.items()))
+                    output_slot.parent_node.implementation.setZValue(len(self.items())+1)
+                    for slot in output_slot.parent_node.output_slots:
+                        for edge in slot.connected_edges:
+                            edge.implementation.setZValue(len(self.items())-1)
                     self._select_arbo_top_out(output_slot.parent_node.implementation)
         except RuntimeError:
             print 'Loop...'
@@ -375,7 +383,19 @@ class NodalScene(QGraphicsScene):
                 item.setZValue(1)
         #on top all selected node
         item_at = self.itemAt(event.scenePos())
-        if type(item) ==  NodePySide:
+        if type(item_at) ==  NodePySide:
             item_at.setZValue(len(self.items())+1)
             self._select_arbo_top_in(item_at)
             self._select_arbo_top_out(item_at)
+        if type(item_at) ==  BackDropPySide and self.key_pressed != Qt.Key_Control :
+            items = self.items(item_at.back_rect)
+            for item in items:
+                item.setSelected(True)
+
+    def mouseReleaseEvent(self, event):
+        item_at = self.itemAt(event.scenePos())
+        if type(item_at) ==  BackDropPySide:
+            items = self.items(item_at.back_rect)
+            for item in items:
+                item.setSelected(False)
+        QGraphicsScene.mouseReleaseEvent(self, event)
