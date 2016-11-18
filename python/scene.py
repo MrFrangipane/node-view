@@ -375,7 +375,7 @@ class NodalScene(QGraphicsScene):
                 item.setZValue(1)
         #on top all selected node
         item_at = self.itemAt(event.scenePos())
-        if isinstance(item_at, NodePySide):
+        if type(item) ==  NodePySide:
             item_at.setZValue(len(self.items())+1)
             self._select_arbo_top_in(item_at)
             self._select_arbo_top_out(item_at)
