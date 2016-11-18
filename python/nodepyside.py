@@ -421,3 +421,8 @@ class BackDropPySide(NodePySide):
     def __init__(self, node, parent=None):
         super(BackDropPySide, self).__init__(node, parent=None)
         pass
+
+    def mousePressEvent(self, event):
+        super(BackDropPySide, self).mousePressEvent(event)
+        #fix zvalue background
+        self.setZValue(0)
