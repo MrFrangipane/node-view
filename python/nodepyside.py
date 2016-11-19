@@ -239,20 +239,36 @@ class NodePySide(QGraphicsItem):  # Move all geometry computations in upper clas
         )
         # Node Background
         painter.setPen(Qt.NoPen)
-        if self.node.is_resizable:
-            painter.setBrush(_color(BACKGROUND_COLOR))
-        else:
-            painter.setBrush(_color(BACKGROUND_COLOR).darker(110))
-        painter.drawRect(self._rect)
+        painter.setBrush(_color(BACKGROUND_COLOR).darker(110))
+        path = QPainterPath()
+        path.addRoundedRect(self._rect, 10, 10)
+        painter.drawPath(path)
         # Header Background
+        path_head = QPainterPath()
         painter.setBrush(_color(self.node.color))
         painter.setPen(Qt.NoPen)
+        path_head.addRoundedRect(rect_header, 10, 10)
+        painter.drawPath(path_head)
+        rect_header.setY(rect_header.y()+10)
         painter.drawRect(rect_header)
+        rect_header.setY(rect_header.y()-10)
+        rect_header.setX(rect_header.x()+4)
+        #draw line
+        if not self.node.is_resizable:
+            line_rect = QRect(rect_header.x()-4, rect_header.y() + 32, rect_header.width()+4, 2)
+            painter.setBrush(_color(self.node.color).lighter(130))
+            painter.drawRect(line_rect)
+            line_rect = QRect(rect_header.x()-4, rect_header.y() + 34, rect_header.width()+4, 4)
+            painter.setBrush(_color(BACKGROUND_COLOR).darker(150))
+            painter.drawRect(line_rect)
+
         # Frame
         painter.setBrush(Qt.NoBrush)
         if self.isSelected():
             painter.setPen(_color(HANDLE_COLOR))
-            painter.drawRect(self._rect)
+            path = QPainterPath()
+            path.addRoundedRect(self._rect, 10, 10)
+            painter.drawPath(path)
         # Header Text
         painter.setFont(NAME_FONT)
         painter.setPen(_color(TEXT_COLOR))
@@ -269,12 +285,6 @@ class NodePySide(QGraphicsItem):  # Move all geometry computations in upper clas
             "\n" + self.node.caption
         )
         painter.setOpacity(1)
-        # # Handles
-        if self._is_mouse_over:
-            painter.setBrush(_color(HANDLE_COLOR))
-            painter.setPen(Qt.NoPen)
-            for handle_rect in self._handle_rects.values():
-                painter.drawEllipse(handle_rect)
 
     def mousePressEvent(self, event):
         # Update Members
@@ -305,18 +315,113 @@ class NodePySide(QGraphicsItem):  # Move all geometry computations in upper clas
             # Exit
             #return
             return
-        # Prepare
+
+    def hoverEnterEvent(self, event):
+        super(NodePySide, self).hoverEnterEvent(event)
+        # Set Member
+        self._is_mouse_over = True
+
+    def hoverLeaveEvent(self, event):
+        super(NodePySide, self).hoverLeaveEvent(event)
+        # Reset Members
+        self._is_mouse_over = False
+        # Ask Redraw
         self.prepareGeometryChange()
+
+    def itemChange(self, change, value):
+        # If Moved
+        if self.scene() and change in [QGraphicsItem.ItemPositionChange, QGraphicsItem.ItemPositionHasChanged]:
+            #Update Node's ans Slots's position
+            self.node.position = (self.pos().x(), self.pos().y())
+            #update pos attribute in slots
+            for input in self.node.input_slots:
+                input.implementation.update_pos()
+            for output in self.node.output_slots:
+                output.implementation.update_pos()
+            # Warn Scene
+            self.scene().node_changed(self.node)
+        # If Selected
+        elif self.scene() and change in [QGraphicsItem.ItemSelectedChange, QGraphicsItem.ItemSelectedHasChanged]:
+            # Update Node's Member
+            self.node.is_selected = self.isSelected()
+            # Warn Scene
+            self.scene().node_changed(self.node)
+            # Shadow Effect
+            self.shadow.setColor(QColor.fromRgbF(*SHADOW_COLOR))
+        # Forward
+        return QGraphicsItem.itemChange(self, change, value)
+
+#Wip
+class BackDropPySide(NodePySide):
+    def __init__(self, node, parent=None):
+        super(BackDropPySide, self).__init__(node, parent=None)
+        self.back_rect = self.mapToScene(self.boundingRect())
+
+    def paint(self, painter, option, widget):
+        # Rects
+        rect_header = QRect(
+            HANDLE_RADIUS / 2.0,
+            HANDLE_RADIUS / 2.0,
+            self._rect.width(),
+            HEADER_HEIGHT - HANDLE_RADIUS
+        )
+        rect_labels = QRect(
+            0,
+            HEADER_HEIGHT,
+            self._rect.width(),
+            ROW_HEIGHT
+        )
+        painter.setPen(Qt.NoPen)
+        painter.setBrush(_color(BACKGROUND_COLOR))
+        painter.drawRect(self._rect)
+        painter.setBrush(_color(self.node.color))
+        painter.drawRect(rect_header)
+        # Header Text
+        painter.setFont(NAME_FONT)
+        painter.setPen(_color(TEXT_COLOR))
+        painter.drawText(
+            rect_header.adjusted(TEXT_PADDING, TEXT_PADDING, -TEXT_PADDING, -TEXT_PADDING),
+            Qt.AlignLeft | Qt.AlignVCenter,
+            self.node.name + "\n"
+        )
+        painter.setOpacity(CAPTION_OPACITY)
+        painter.setFont(CAPTION_FONT)
+        painter.drawText(
+            rect_header.adjusted(TEXT_PADDING, TEXT_PADDING, -TEXT_PADDING, -TEXT_PADDING),
+            Qt.AlignLeft | Qt.AlignVCenter,
+            "\n" + self.node.caption
+        )
+        painter.setOpacity(1)
+        # # Handles
+        if self._is_mouse_over:
+            painter.setBrush(_color(HANDLE_COLOR))
+            painter.setPen(Qt.NoPen)
+            for handle_rect in self._handle_rects.values():
+                painter.drawEllipse(handle_rect)
+
+
+    def mousePressEvent(self, event):
+        super(BackDropPySide, self).mousePressEvent(event)
+        #fix zvalue background
+        self.setZValue(0)
+        self.back_rect = self.mapToScene(self.boundingRect())
+
+    def mouseMoveEvent(self, event):
         # Compute Deltas
         delta_x = event.scenePos().x() - self._previous_mouse_position.x()
         delta_y = event.scenePos().y() - self._previous_mouse_position.y()
+        # Update Mouse Position
+        self._previous_mouse_position.setX(self._previous_mouse_position.x() + delta_x)
+        self._previous_mouse_position.setY(self._previous_mouse_position.y() + delta_y)
         # Copy Size Values
         new_width = self.node.size[0]
         new_height = self.node.size[1]
         # Should move
         is_moving_x = False
         is_moving_y = False
-        #if pressed
+        # Prepare
+        self.prepareGeometryChange()
+        # if pressed
         if self._handle_pressed is HANDLE_TOP_LEFT:
             # Resize
             new_width -= delta_x
@@ -375,56 +480,5 @@ class NodePySide(QGraphicsItem):  # Move all geometry computations in upper clas
             self.moveBy(delta_x, 0)
         if is_moving_y:
             self.moveBy(0, delta_y)
-        # Update Mouse Position
-        self._previous_mouse_position.setX(self._previous_mouse_position.x() + delta_x)
-        self._previous_mouse_position.setY(self._previous_mouse_position.y() + delta_y)
         # Compute New Geometry
         self.compute_geometry_values()
-
-    def hoverEnterEvent(self, event):
-        super(NodePySide, self).hoverEnterEvent(event)
-        # Set Member
-        self._is_mouse_over = True
-
-    def hoverLeaveEvent(self, event):
-        super(NodePySide, self).hoverLeaveEvent(event)
-        # Reset Members
-        self._is_mouse_over = False
-        # Ask Redraw
-        self.prepareGeometryChange()
-
-    def itemChange(self, change, value):
-        # If Moved
-        if self.scene() and change in [QGraphicsItem.ItemPositionChange, QGraphicsItem.ItemPositionHasChanged]:
-            #Update Node's ans Slots's position
-            self.node.position = (self.pos().x(), self.pos().y())
-            #update pos attribute in slots
-            for input in self.node.input_slots:
-                input.implementation.update_pos()
-            for output in self.node.output_slots:
-                output.implementation.update_pos()
-            # Warn Scene
-            self.scene().node_changed(self.node)
-        # If Selected
-        elif self.scene() and change in [QGraphicsItem.ItemSelectedChange, QGraphicsItem.ItemSelectedHasChanged]:
-            # Update Node's Member
-            self.node.is_selected = self.isSelected()
-            # Warn Scene
-            self.scene().node_changed(self.node)
-            # Shadow Effect
-            self.shadow.setColor(QColor.fromRgbF(*SHADOW_COLOR))
-        # Forward
-        return QGraphicsItem.itemChange(self, change, value)
-
-#Wip
-class BackDropPySide(NodePySide):
-    def __init__(self, node, parent=None):
-        super(BackDropPySide, self).__init__(node, parent=None)
-        self.back_rect = self.mapToScene(self.boundingRect())
-
-
-    def mousePressEvent(self, event):
-        super(BackDropPySide, self).mousePressEvent(event)
-        #fix zvalue background
-        self.setZValue(0)
-        self.back_rect = self.mapToScene(self.boundingRect())
