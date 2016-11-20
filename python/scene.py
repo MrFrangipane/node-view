@@ -34,6 +34,8 @@ class NodalScene(QGraphicsScene):
         self._mouse_previous_position = QPoint(0, 0)
         #key pressed
         self.key_pressed = None
+        #over item ?
+        self.over_item = False
 
 
 
@@ -391,6 +393,14 @@ class NodalScene(QGraphicsScene):
             items = self.items(item_at.back_rect)
             for item in items:
                 item.setSelected(True)
+
+    def mouseMoveEvent(self, event):
+        super(NodalScene, self).mouseMoveEvent(event)
+        #mouse over item ?
+        if self.itemAt(event.scenePos()):
+            self.over_item = True
+        else:
+            self.over_item = False
 
     def mouseReleaseEvent(self, event):
         item_at = self.itemAt(event.scenePos())
