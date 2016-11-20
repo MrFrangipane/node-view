@@ -407,6 +407,7 @@ class BackDropPySide(NodePySide):
         self.back_rect = self.mapToScene(self.boundingRect())
 
     def mouseMoveEvent(self, event):
+        super(BackDropPySide, self).mouseMoveEvent(event)
         # Compute Deltas
         delta_x = event.scenePos().x() - self._previous_mouse_position.x()
         delta_y = event.scenePos().y() - self._previous_mouse_position.y()
