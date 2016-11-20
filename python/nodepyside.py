@@ -405,8 +405,6 @@ class BackDropPySide(NodePySide):
         #fix zvalue background
         self.setZValue(0)
         self.back_rect = self.mapToScene(self.boundingRect())
-
-    def mouseMoveEvent(self, event):
         # Rects
         rect_header = QRect(
             self.node.position[0],
@@ -416,11 +414,16 @@ class BackDropPySide(NodePySide):
         )
         #Moveable que si on bonge le header
         #check si le pointeur est dans le header
-        if not rect_header.contains(event.scenePos().toPoint()):
-            return
+        if rect_header.contains(event.scenePos().toPoint()):
+            self.click_header = True
         else:
-            #sinon super le reste
+            self.click_header = False
+
+    def mouseMoveEvent(self, event):
+        if self.click_header:
             super(BackDropPySide, self).mouseMoveEvent(event)
+        else:
+            return
         # Compute Deltas
         delta_x = event.scenePos().x() - self._previous_mouse_position.x()
         delta_y = event.scenePos().y() - self._previous_mouse_position.y()
