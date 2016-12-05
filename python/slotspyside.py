@@ -136,7 +136,7 @@ class SlotDotPySide(QGraphicsItem):
         drag = QDrag(event.widget())
         drag.setMimeData(self.mimePos)
         drag.setPixmap(QPixmap(1,1))
-        drag.exec_(Qt.IgnoreAction)
+        drag.exec_(Qt.LinkAction)
 
     def hoverMoveEvent(self, event):
         #hovered without drag
