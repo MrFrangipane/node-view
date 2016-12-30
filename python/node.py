@@ -17,9 +17,12 @@ class Node(object):
         self.position = (0, 0)
         self.size = (0, 0)
         self.is_selected = False
+        self.zvalue = 2
+        self.edges = []
         self.parent_scene = parent_scene  # PySide Related !!
         # Create Delegate
         self.implementation = implementation_class(self)
+        self.implementation.setZValue(self.zvalue)
 
     # Setters
     def set_inputs(self, inputs):
@@ -30,6 +33,8 @@ class Node(object):
             input_.parent_node = self
         # Update Delegate
         self.implementation.compute_geometry_values()
+        self.implementation.add_input_slots()
+
 
     def set_outputs(self, outputs):
         # Update Member with  fresh copies of outputs
@@ -37,8 +42,13 @@ class Node(object):
         # Register as parent Node
         for output in self.output_slots:
             output.parent_node = self
-        # Update Delegate
         self.implementation.compute_geometry_values()
+        self.implementation.add_output_slots()
+
+    def set_zvalue(self, z):
+        #
+        self.zvalue = z
+        self.implementation.setZValue(self.zvalue)
 
     def set_position(self, x, y):
         # Update Member
