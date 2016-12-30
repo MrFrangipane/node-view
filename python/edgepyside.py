@@ -150,8 +150,11 @@ class ConnectingEdgePySide(QGraphicsItem):
         target_node = target_slot.parent_node
 
         # Get Slots Scene positions
-        origin_position = map(add, origin_node.position, origin_slot.position)
-        target_position = map(add, target_node.position, target_slot.position)
+        origin_position = origin_slot.implementation.dot.dot_pos
+        target_position = target_slot.implementation.dot.dot_pos
+        #zvalue for edge node
+        origin_node.edges.append(self)
+        self.setZValue(origin_node.implementation.zValue()-1)
 
         # Compute Position
         self._edge_geometry.update_geometry(origin_position, target_position)
@@ -175,6 +178,8 @@ class ConnectingEdgePySide(QGraphicsItem):
             origin_color = QColor.fromRgbF(*self.edge.origin_slot.color).lighter()
             edge_color = QColor.fromRgbF(*EDGE_COLOR_SELECTED)
             target_color = QColor.fromRgbF(*self.edge.target_slot.color).lighter()
+            #set zvalue same has nodepyside
+            self.setZValue(self.edge.origin_slot.parent_node.implementation.zValue()-1)
         # Not Selected
         else:
             # Shadow Color
