@@ -15,7 +15,9 @@ Nodeview. A PySide nodal view
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-from errors import NodeviewConnectionError
+from uuid import uuid4 as uid
+from collections import OrderedDict
+from errors import NodeviewConnectionRoleError, NodeviewConnectionLimitError
 
 
 class Slot(object):
@@ -24,14 +26,22 @@ class Slot(object):
     OUTPUT = "output"
 
     def __init__(self, name, role, parent_node):
+        self.uid = str(uid())
         self._parent_node = parent_node
         self.name = name
         self.role = role
         self.connected = list()
+        self.max_connection = 0
 
     def connect(self, target_slot, _mirror_connect=False):
         if target_slot.role == self.role:
-            raise NodeviewConnectionError(self, target_slot)
+            raise NodeviewConnectionRoleError(self, target_slot)
+
+        if self.max_connection != 0 and len(self.connected) >= self.max_connection:
+            raise NodeviewConnectionLimitError(self)
+
+        if target_slot.max_connection != 0 and len(target_slot.connected) >= target_slot.max_connection:
+            raise NodeviewConnectionLimitError(target_slot)
 
         if target_slot not in self.connected:
             self.connected.append(target_slot)
@@ -48,3 +58,13 @@ class Slot(object):
         connected = list(self.connected)
         for target_slot in connected:
             target_slot.disconnect(self)
+
+    def to_dict(self):
+        slot_dict = OrderedDict()
+        slot_dict['uid'] = self.uid
+        slot_dict['name'] = self.name
+        slot_dict['role'] = self.role
+        slot_dict['max_connection'] = self.max_connection
+        slot_dict['connected_to'] = [slot.uid for slot in self.connected]
+
+        return slot_dict

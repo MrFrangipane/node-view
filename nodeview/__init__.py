@@ -22,7 +22,8 @@ from node import Node
 
 class Graph(object):
 
-    def __init__(self):
+    def __init__(self, name):
+        self.name = name
         self.nodes = list()
 
     def add_node(self, node):

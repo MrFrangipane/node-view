@@ -1,14 +1,20 @@
 from unittest import TestCase
 import nodeview
+import nodeview.slot
+import mock
 
 
 class TestSlot(TestCase):
 
     def setUp(self):
-        self.node_a = nodeview.Node("Node A", inputs=["input1"])
-        self.node_b = nodeview.Node("Node B", outputs=["output1"])
+        nodeview.slot.uid = mock.uid
+        graph = nodeview.Graph("Graph")
+
+        self.node_a = nodeview.Node("Node A", graph, inputs=["input1"])
+        self.node_b = nodeview.Node("Node B", graph, outputs=["output1"])
         self.node_c = nodeview.Node(
             name="Node C",
+            graph=graph,
             inputs=["input1"],
             outputs=["output1"]
         )
@@ -17,6 +23,9 @@ class TestSlot(TestCase):
         self.slot_b_out = self.node_b.outputs['output1']
         self.slot_c_in = self.node_c.inputs['input1']
         self.slot_c_out = self.node_c.outputs['output1']
+
+    def tearDown(self):
+        mock.uid_counter = 0
 
     def test_connect_from_in_to_out(self):
         self.slot_b_out.connect(self.slot_a_in)
@@ -46,14 +55,14 @@ class TestSlot(TestCase):
 
     def test_connect_from_in_to_in(self):
         self.assertRaises(
-            nodeview.errors.NodeviewConnectionError,
+            nodeview.errors.NodeviewConnectionRoleError,
             self.slot_a_in.connect,
             self.slot_c_in
         )
 
     def test_connect_from_out_to_out(self):
         self.assertRaises(
-            nodeview.errors.NodeviewConnectionError,
+            nodeview.errors.NodeviewConnectionRoleError,
             self.slot_b_out.connect,
             self.slot_c_out
         )
@@ -121,4 +130,44 @@ class TestSlot(TestCase):
         self.assertEqual(
             list(),
             self.slot_c_out.connected
+        )
+
+    def test_max_connection(self):
+        self.slot_a_in.max_connection = 1
+        self.slot_b_out.connect(self.slot_a_in)
+
+        self.assertRaises(
+            nodeview.errors.NodeviewConnectionLimitError,
+            self.slot_c_out.connect, self.slot_a_in
+        )
+
+    def test_to_dict_input(self):
+        self.slot_a_in.max_connection = 5
+        self.slot_b_out.connect(self.slot_a_in)
+        slot_dict = self.slot_a_in.to_dict()
+
+        self.assertEqual(
+            {
+                "uid": "2",
+                "name": "input1",
+                "role": "input",
+                "max_connection": 5,
+                "connected_to": ["4"]
+            },
+            slot_dict
+        )
+
+    def test_to_dict_output(self):
+        self.slot_b_out.connect(self.slot_a_in)
+        slot_dict = self.slot_b_out.to_dict()
+
+        self.assertEqual(
+            {
+                "uid": "4",
+                "name": "output1",
+                "role": "output",
+                "max_connection": 0,
+                "connected_to": ["2"]
+            },
+            slot_dict
         )

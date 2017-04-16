@@ -17,8 +17,7 @@ Nodeview. A PySide nodal view
 """
 
 
-class NodeviewAttributeError(Exception):
-
+class NodeviewNodeAttributeError(Exception):
     def __init__(self, node, attribute):
         Exception.__init__(self,
             "Node '{node}' has no attribute '{attribute}'".format(
@@ -28,8 +27,7 @@ class NodeviewAttributeError(Exception):
         )
 
 
-class NodeviewConnectionError(Exception):
-
+class NodeviewConnectionRoleError(Exception):
     def __init__(self, source_slot, target_slot):
         Exception.__init__(self,
             "Can't connect two slots with same role ('{role}'). '{node_a}'.'{slot_a}' -> '{node_b}'.'{slot_b}'".format(
@@ -38,5 +36,16 @@ class NodeviewConnectionError(Exception):
                 slot_a=source_slot.name,
                 node_b=target_slot._parent_node.name,
                 slot_b=target_slot.name
+            )
+        )
+
+
+class NodeviewConnectionLimitError(Exception):
+    def __init__(self, slot):
+        Exception.__init__(self,
+            "Exceeding maximum number of connection ({max}) for slot '{slot}' of '{node}'".format(
+                max=slot.max_connection,
+                node=slot._parent_node.name,
+                slot=slot.name
             )
         )
