@@ -45,5 +45,6 @@ class Slot(object):
             target_slot.disconnect(self)
 
     def clear(self):
-        for target_slot in self.connected:
+        connected = list(self.connected)
+        for target_slot in connected:
             target_slot.disconnect(self)
