@@ -15,8 +15,30 @@ Nodeview. A PySide nodal view
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import errors
-from slot import Slot
-from node import Node
-from graph import Graph
-from graphics import GraphicNode
+from unittest import TestCase
+import nodeview
+
+
+class TestGraphics(TestCase):
+
+    def setUp(self):
+        self.node = nodeview.Node(
+            name="Node",
+            graph=nodeview.Graph("Graph"),
+            inputs=["1", "2"],
+            outputs=["a", "b"]
+        )
+
+    def test_node(self):
+        node = nodeview.GraphicNode(self.node)
+        node.update()
+
+        self.assertEqual(
+            150,
+            node.width
+        )
+
+        self.assertEqual(
+            60,
+            node.height
+        )
