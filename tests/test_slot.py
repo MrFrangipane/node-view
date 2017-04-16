@@ -16,6 +16,7 @@ Nodeview. A PySide nodal view
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 from unittest import TestCase
+from collections import OrderedDict
 import nodeview
 import nodeview.slot
 import mock
@@ -168,6 +169,7 @@ class TestSlot(TestCase):
                 "uid": "2",
                 "name": "input1",
                 "role": "input",
+                "attributes": {},
                 "max_connection": 5,
                 "connected_to": ["4"]
             },
@@ -175,6 +177,10 @@ class TestSlot(TestCase):
         )
 
     def test_to_dict_output(self):
+        attributes = OrderedDict()
+        attributes['attribute1'] = 1
+        attributes['attribute2'] = "two"
+        self.slot_b_out.attributes = attributes
         self.slot_b_out.connect(self.slot_a_in)
         slot_dict = self.slot_b_out.to_dict()
 
@@ -183,6 +189,10 @@ class TestSlot(TestCase):
                 "uid": "4",
                 "name": "output1",
                 "role": "output",
+                "attributes": {
+                    "attribute1": 1,
+                    "attribute2": "two"
+                },
                 "max_connection": 0,
                 "connected_to": ["2"]
             },

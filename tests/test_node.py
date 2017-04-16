@@ -131,6 +131,7 @@ class TestNode(TestCase):
                         "uid": "2",
                         "name": "in1",
                         "role": "input",
+                        "attributes": {},
                         "max_connection": 1,
                         "connected_to": []
                     },
@@ -138,6 +139,7 @@ class TestNode(TestCase):
                         "uid": "3",
                         "name": "in2",
                         "role": "input",
+                        "attributes": {},
                         "max_connection": 0,
                         "connected_to": []
                     }
@@ -147,6 +149,7 @@ class TestNode(TestCase):
                         "uid": "4",
                         "name": "out1",
                         "role": "output",
+                        "attributes": {},
                         "max_connection": 0,
                         "connected_to": []
                     },
@@ -154,6 +157,7 @@ class TestNode(TestCase):
                         "uid": "5",
                         "name": "out2",
                         "role": "output",
+                        "attributes": {},
                         "max_connection": 0,
                         "connected_to": []
                     }
