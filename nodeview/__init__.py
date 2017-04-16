@@ -18,13 +18,4 @@ Nodeview. A PySide nodal view
 import errors
 from slot import Slot
 from node import Node
-
-
-class Graph(object):
-
-    def __init__(self, name):
-        self.name = name
-        self.nodes = list()
-
-    def add_node(self, node):
-        self.nodes.append(node)
+from graph import Graph
