@@ -18,18 +18,26 @@ Nodeview. A PySide nodal view
 from unittest import TestCase
 from collections import OrderedDict
 import nodeview
+import nodeview.node
+import nodeview.slot
+import mock
 
 
 class TestNode(TestCase):
 
     def setUp(self):
-        self.graph = nodeview.Graph()
+        nodeview.node.uid = mock.uid
+        nodeview.slot.uid = mock.uid
+
+        self.graph = nodeview.Graph("Graph")
+
+    def tearDown(self):
+        mock.uid_counter = 0
 
     def test_create_node_no_params(self):
-        node = nodeview.Node("Node")
+        node = nodeview.Node("Node", self.graph)
 
         self.assertEqual("Node", node.name)
-        self.assertEqual(list(), self.graph.nodes)
         self.assertEqual(dict(), node.inputs)
         self.assertEqual(dict(), node.outputs)
         self.assertEqual(dict(), node.attributes)
@@ -45,6 +53,7 @@ class TestNode(TestCase):
     def test_create_node_inputs(self):
         node = nodeview.Node(
             name="Node",
+            graph=self.graph,
             inputs=['input 1', 'input 2']
         )
 
@@ -60,6 +69,7 @@ class TestNode(TestCase):
     def test_create_node_outputs(self):
         node = nodeview.Node(
             name="Node",
+            graph=self.graph,
             outputs=['output 1', 'output 2']
         )
 
@@ -77,18 +87,81 @@ class TestNode(TestCase):
         attributes['name'] = "Node One"
         attributes['caption'] = "The One and only"
 
-        node = nodeview.Node(name="Node", attributes=attributes)
+        node = nodeview.Node(
+            name="Node",
+            graph=self.graph,
+            attributes=attributes
+        )
 
         self.assertEqual(['name', 'caption'], node.attribute_names())
         self.assertEqual("Node One", node['name'])
         self.assertEqual("The One and only", node.get('caption'))
 
         self.assertRaises(
-            nodeview.errors.NodeviewAttributeError,
+            nodeview.errors.NodeviewNodeAttributeError,
             node.__getitem__, 'missing-attribute'
         )
 
         self.assertEqual(
             "default-value",
             node.get('missing-attribute', "default-value")
+        )
+
+    def test_to_dict(self):
+        attributes = OrderedDict()
+        attributes['attr1'] = 'value1'
+        attributes['attr2'] = 2.0
+        node = nodeview.Node(
+            name="Node",
+            graph=self.graph,
+            inputs=['in1', 'in2'],
+            outputs=['out1', 'out2'],
+            attributes=attributes
+        )
+        node.inputs['in1'].max_connection = 1
+
+        node_dict = node.to_dict()
+
+        self.assertEqual(
+            {
+                "uid": "1",
+                "name": "Node",
+                "inputs": {
+                    "in1": {
+                        "uid": "2",
+                        "name": "in1",
+                        "role": "input",
+                        "max_connection": 1,
+                        "connected_to": []
+                    },
+                    "in2": {
+                        "uid": "3",
+                        "name": "in2",
+                        "role": "input",
+                        "max_connection": 0,
+                        "connected_to": []
+                    }
+                },
+                "outputs": {
+                    "out1": {
+                        "uid": "4",
+                        "name": "out1",
+                        "role": "output",
+                        "max_connection": 0,
+                        "connected_to": []
+                    },
+                    "out2": {
+                        "uid": "5",
+                        "name": "out2",
+                        "role": "output",
+                        "max_connection": 0,
+                        "connected_to": []
+                    }
+                },
+                "attributes": {
+                    "attr1": "value1",
+                    "attr2": 2.0
+                }
+            },
+            node_dict
         )

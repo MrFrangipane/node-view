@@ -15,14 +15,16 @@ Nodeview. A PySide nodal view
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
+from uuid import uuid4 as uid
 from collections import OrderedDict
 from slot import Slot
-from errors import NodeviewAttributeError
+from errors import NodeviewNodeAttributeError
 
 
 class Node(object):
 
-    def __init__(self, name, graph=None, inputs=None, outputs=None, attributes=None):
+    def __init__(self, name, graph, inputs=None, outputs=None, attributes=None):
+        self.uid = str(uid())
         self.name = name
         self.graph = graph
         self.inputs = OrderedDict()
@@ -45,7 +47,7 @@ class Node(object):
         try:
             return self.attributes[item]
         except KeyError:
-            raise NodeviewAttributeError(self, item)
+            raise NodeviewNodeAttributeError(self, item)
 
     def _init_inputs(self, input_names):
         for input_name in input_names:
@@ -71,5 +73,24 @@ class Node(object):
     def get(self, item, default=None):
         try:
             return self[item]
-        except NodeviewAttributeError:
+        except NodeviewNodeAttributeError:
             return default
+
+    def to_dict(self):
+        node_dict = OrderedDict()
+        node_dict['uid'] = self.uid
+        node_dict['name'] = self.name
+
+        inputs = OrderedDict()
+        for input_name, input_slot in self.inputs.items():
+            inputs[input_name] = input_slot.to_dict()
+        node_dict['inputs'] = inputs
+
+        outputs = OrderedDict()
+        for output_name, output_slot in self.outputs.items():
+            outputs[output_name] = output_slot.to_dict()
+        node_dict['outputs'] = outputs
+
+        node_dict['attributes'] = self.attributes
+
+        return node_dict
