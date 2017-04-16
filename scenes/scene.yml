@@ -1,139 +1,86 @@
 ---
 connections:
-- {origin_node_id: 2, origin_slot_id: 0, target_node_id: 6, target_slot_id: 2}
-- {origin_node_id: 4, origin_slot_id: 0, target_node_id: 3, target_slot_id: 0}
-- {origin_node_id: 5, origin_slot_id: 0, target_node_id: 4, target_slot_id: 0}
-- {origin_node_id: 7, origin_slot_id: 0, target_node_id: 2, target_slot_id: 0}
+- {origin_node_id: 1, origin_slot_id: 0, target_node_id: 3, target_slot_id: 1}
+- {origin_node_id: 3, origin_slot_id: 0, target_node_id: 2, target_slot_id: 2}
 nodes:
+
 - name: Backdrop
   caption: Range des trucs ici
   color: [0, 0, 0]
-  position: [-1.0, 134.0]
-  size: [853.0, 373.0]
+  position: [-595.0, -59.0]
+  size: [792.0, 390.0]
   is_selected: false
   is_resizable: true
   input_slots: []
   output_slots: []
-- name: Backdrop
-  caption: Range des trucs ici 2
-  color: [0, 0, 0]
-  position: [-780.0, 216.0]
-  size: [514.0, 296.0]
-  is_selected: false
-  is_resizable: true
-  input_slots: []
-  output_slots: []
-- name: Process
-  caption: Linear Ramp
+
+- name: LFO
+  caption: Triangle 1/4
   color: [0.75, 0.75, 0.25]
-  position: [-170.0, 117.0]
-  size: [200, 76]
+  position: [-537.0, 172.0]
+  size: [200, 101]
   is_selected: false
   is_resizable: false
   input_slots:
-  - name: Input
+  - name: Rate
+    color: [0.75, 0.75, 0.75]
+  - name: Phase
     color: [0.75, 0.75, 0.75]
   output_slots:
   - name: Out
     color: [0.75, 0.75, 0.75]
-- name: Output
-  caption: Invert Ramp
-  color: [0.25, 0.75, 0.75]
-  position: [-63.0, -221.0]
-  size: [200, 76]
+- name: Fixture
+  caption: PAR Mini Stage
+  color: [0.75, 0.25, 0.75]
+  position: [-55.0, 79.0]
+  size: [200, 126]
   is_selected: false
   is_resizable: false
   input_slots:
-  - name: Input
+  - name: Hue
     color: [0.75, 0.75, 0.75]
-  output_slots:
-  - name: Out
+  - name: Saturation
     color: [0.75, 0.75, 0.75]
-- name: Rocks
-  caption: Shader des familles
-  color: [0.75, 0.5, 0.25]
-  position: [-225.0, -88.0]
-  size: [200, 201]
-  is_selected: false
-  is_resizable: false
-  input_slots:
-  - name: Diffuse
-    color: [0.95, 0.95, 0.05]
-  - name: Reflection
-    color: [0.95, 0.95, 0.05]
-  - name: Refraction
-    color: [0.95, 0.95, 0.05]
-  - name: Bump
-    color: [0.05, 0.95, 0.95]
-  - name: Opacity
-    color: [0.95, 0.95, 0.05]
-  - name: Displace
-    color: [0.05, 0.95, 0.95]
-  output_slots:
-  - name: Out
-    color: [0.05, 0.95, 0.95]
-- name: Snow
-  caption: Chantale Goyave
-  color: [0.5, 0.5, 0.95]
-  position: [-478.0, -21.0]
-  size: [200, 201]
-  is_selected: false
-  is_resizable: false
-  input_slots:
-  - name: Diffuse
-    color: [0.95, 0.95, 0.05]
-  - name: Reflection
-    color: [0.95, 0.95, 0.05]
-  - name: Refraction
-    color: [0.95, 0.95, 0.05]
-  - name: Bump
-    color: [0.05, 0.95, 0.95]
-  - name: Opacity
-    color: [0.95, 0.95, 0.05]
-  - name: Displace
-    color: [0.05, 0.95, 0.95]
-  output_slots:
-  - name: Out
-    color: [0.05, 0.95, 0.95]
-- name: Convert 1
-  caption: Pierre Cadran
-  color: [0.95, 0.25, 0.25]
-  position: [229.0, -77.0]
-  size: [200, 151]
-  is_selected: false
-  is_resizable: false
-  input_slots:
-  - name: Red
-    color: [0.9, 0.1, 0.1]
-  - name: Green
-    color: [0.1, 0.9, 0.1]
-  - name: Blue
-    color: [0.1, 0.1, 0.9]
-  - name: Alpha
-    color: [0.8, 0.8, 0.8]
-  output_slots:
-  - name: Chroma
-    color: [0.05, 0.95, 0.95]
-  - name: Luma
-    color: [0.05, 0.95, 0.95]
-- name: Convert 2
+  - name: Lightness
+    color: [0.75, 0.75, 0.75]
+  output_slots: []
+
+- name: Multiply
   caption: ''
-  color: [0.25, 0.75, 0.25]
-  position: [-413.0, -153.0]
-  size: [200, 151]
-  is_selected: true
+  color: [0.25, 0.25, 0.75]
+  position: [-295.0, 191.0]
+  size: [200, 101]
+  is_selected: false
   is_resizable: false
   input_slots:
-  - name: Red
-    color: [0.9, 0.1, 0.1]
-  - name: Green
-    color: [0.1, 0.9, 0.1]
-  - name: Blue
-    color: [0.1, 0.1, 0.9]
-  - name: Alpha
-    color: [0.8, 0.8, 0.8]
+  - name: Value
+    color: [0.75, 0.75, 0.75]
+  - name: Factor
+    color: [0.75, 0.75, 0.75]
   output_slots:
-  - name: Chroma
-    color: [0.05, 0.95, 0.95]
-  - name: Luma
-    color: [0.05, 0.95, 0.95]
+  - name: Out
+    color: [0.75, 0.75, 0.75]
+
+- name: Constant 1
+  caption: '1.0'
+  color: [0.25, 0.25, 0.25]
+  position: [-295.0, 191.0]
+  size: [200, 101]
+  is_selected: false
+  is_resizable: false
+  input_slots: []
+  output_slots:
+  - name: Out
+    color: [0.75, 0.75, 0.75]
+
+- name: Constant 2
+  caption: '0.5'
+  color: [0.25, 0.25, 0.25]
+  position: [-295.0, 191.0]
+  size: [200, 101]
+  is_selected: false
+  is_resizable: false
+  input_slots: []
+  output_slots:
+  - name: Out
+    color: [0.75, 0.75, 0.75]

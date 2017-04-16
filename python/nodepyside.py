@@ -6,6 +6,8 @@ WIDTH = 200
 HEADER_HEIGHT = 40
 ROW_HEIGHT = 25
 
+ROUND_RADIUS = 4
+
 BACKGROUND_COLOR = (.22, .22, .22, 1)
 FRAME_COLOR = (0, 0, 0)
 
@@ -241,20 +243,20 @@ class NodePySide(QGraphicsItem):  # Move all geometry computations in upper clas
         painter.setPen(Qt.NoPen)
         painter.setBrush(_color(BACKGROUND_COLOR).darker(110))
         path = QPainterPath()
-        path.addRoundedRect(self._rect, 10, 10)
+        path.addRoundedRect(self._rect, ROUND_RADIUS, ROUND_RADIUS)
         painter.drawPath(path)
         # Header Background
         path_head = QPainterPath()
         painter.setBrush(_color(self.node.color))
         painter.setPen(Qt.NoPen)
-        path_head.addRoundedRect(rect_header, 10, 10)
+        path_head.addRoundedRect(rect_header, ROUND_RADIUS, ROUND_RADIUS)
         painter.drawPath(path_head)
         rect_header.setY(rect_header.y()+10)
         painter.drawRect(rect_header)
         rect_header.setY(rect_header.y()-10)
         rect_header.setX(rect_header.x()+4)
         #draw line
-        if not self.node.is_resizable:
+        if not self.node.is_resizable and False:
             line_rect = QRect(rect_header.x()-4, rect_header.y() + 32, rect_header.width()+4, 2)
             painter.setBrush(_color(self.node.color).lighter(130))
             painter.drawRect(line_rect)
@@ -267,7 +269,7 @@ class NodePySide(QGraphicsItem):  # Move all geometry computations in upper clas
         if self.isSelected():
             painter.setPen(_color(HANDLE_COLOR))
             path = QPainterPath()
-            path.addRoundedRect(self._rect, 10, 10)
+            path.addRoundedRect(self._rect, ROUND_RADIUS, ROUND_RADIUS)
             painter.drawPath(path)
         # Header Text
         painter.setFont(NAME_FONT)
