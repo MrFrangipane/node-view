@@ -25,13 +25,17 @@ class Slot(object):
     INPUT = "input"
     OUTPUT = "output"
 
-    def __init__(self, name, role, parent_node):
+    def __init__(self, name, role, parent_node, attributes=None):
         self.uid = str(uid())
         self._parent_node = parent_node
         self.name = name
         self.role = role
-        self.connected = list()
+        self.attributes = OrderedDict()
         self.max_connection = 0
+        self.connected = list()
+
+        if attributes is not None:
+            self.attributes = attributes
 
     def connect(self, target_slot, _mirror_connect=False):
         if target_slot.role == self.role:
@@ -64,6 +68,7 @@ class Slot(object):
         slot_dict['uid'] = self.uid
         slot_dict['name'] = self.name
         slot_dict['role'] = self.role
+        slot_dict['attributes'] = self.attributes
         slot_dict['max_connection'] = self.max_connection
         slot_dict['connected_to'] = [slot.uid for slot in self.connected]
 
