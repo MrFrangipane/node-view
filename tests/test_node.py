@@ -28,30 +28,11 @@ class TestNode(TestCase):
     def test_create_node_no_params(self):
         node = nodeview.Node("Node")
 
-        self.assertEqual(
-            "Node",
-            node.name
-        )
-
-        self.assertEqual(
-            list(),
-            self.graph.nodes
-        )
-
-        self.assertEqual(
-            dict(),
-            node.inputs
-        )
-
-        self.assertEqual(
-            dict(),
-            node.outputs
-        )
-
-        self.assertEqual(
-            dict(),
-            node.attributes
-        )
+        self.assertEqual("Node", node.name)
+        self.assertEqual(list(), self.graph.nodes)
+        self.assertEqual(dict(), node.inputs)
+        self.assertEqual(dict(), node.outputs)
+        self.assertEqual(dict(), node.attributes)
 
     def test_create_node_in_graph(self):
         node = nodeview.Node("Node", graph=self.graph)
@@ -67,37 +48,14 @@ class TestNode(TestCase):
             inputs=['input 1', 'input 2']
         )
 
-        self.assertEqual(
-            2,
-            len(node.inputs)
-        )
-
-        self.assertEqual(
-            ['input 1', 'input 2'],
-            node.inputs.keys()
-        )
+        self.assertEqual(2, len(node.inputs))
+        self.assertEqual(['input 1', 'input 2'], node.inputs.keys())
 
         slot = node.inputs['input 1']
-
-        self.assertIsInstance(
-            slot,
-            nodeview.Slot
-        )
-
-        self.assertEqual(
-            "input 1",
-            slot.name
-        )
-
-        self.assertEqual(
-            nodeview.Slot.INPUT,
-            slot.role
-        )
-
-        self.assertEqual(
-            node,
-            slot._parent_node
-        )
+        self.assertIsInstance(slot, nodeview.Slot)
+        self.assertEqual("input 1", slot.name)
+        self.assertEqual(nodeview.Slot.INPUT, slot.role)
+        self.assertEqual(node, slot._parent_node)
 
     def test_create_node_outputs(self):
         node = nodeview.Node(
@@ -105,67 +63,29 @@ class TestNode(TestCase):
             outputs=['output 1', 'output 2']
         )
 
-        self.assertEqual(
-            2,
-            len(node.outputs)
-        )
-
-        self.assertEqual(
-            ['output 1', 'output 2'],
-            node.outputs.keys()
-        )
+        self.assertEqual(2, len(node.outputs))
+        self.assertEqual(['output 1', 'output 2'], node.outputs.keys())
 
         slot = node.outputs['output 1']
-
-        self.assertIsInstance(
-            slot,
-            nodeview.Slot
-        )
-
-        self.assertEqual(
-            "output 1",
-            slot.name
-        )
-
-        self.assertEqual(
-            nodeview.Slot.OUTPUT,
-            slot.role
-        )
-
-        self.assertEqual(
-            node,
-            slot._parent_node
-        )
+        self.assertIsInstance(slot, nodeview.Slot)
+        self.assertEqual("output 1", slot.name)
+        self.assertEqual(nodeview.Slot.OUTPUT, slot.role)
+        self.assertEqual(node, slot._parent_node)
 
     def test_create_node_attributes(self):
         attributes = OrderedDict()
         attributes['name'] = "Node One"
         attributes['caption'] = "The One and only"
 
-        node = nodeview.Node(
-            name="Node",
-            attributes=attributes
-        )
+        node = nodeview.Node(name="Node", attributes=attributes)
 
-        self.assertEqual(
-            ['name', 'caption'],
-            node.attribute_names()
-        )
-
-        self.assertEqual(
-            "Node One",
-            node['name']
-        )
-
-        self.assertEqual(
-            "The One and only",
-            node.get('caption')
-        )
+        self.assertEqual(['name', 'caption'], node.attribute_names())
+        self.assertEqual("Node One", node['name'])
+        self.assertEqual("The One and only", node.get('caption'))
 
         self.assertRaises(
             nodeview.errors.NodeviewAttributeError,
-            node.__getitem__,
-            'missing-attribute'
+            node.__getitem__, 'missing-attribute'
         )
 
         self.assertEqual(
