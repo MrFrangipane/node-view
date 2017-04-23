@@ -39,7 +39,7 @@ class Node(object):
 
     def __init__(self, name, graph, inputs=None, outputs=None, attributes=None):
         """
-        Constructor
+        Create a new node to a given graph
         :param name: Valid string 
         :param graph: Parent Graph
         :param inputs: List of input names

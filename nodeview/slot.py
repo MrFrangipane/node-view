@@ -24,9 +24,6 @@ class Slot(object):
     """
     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna 
     aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
-    
-    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint 
-    occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
     """
 
     INPUT = "input"
@@ -34,7 +31,7 @@ class Slot(object):
 
     def __init__(self, name, role, parent_node, attributes=None):
         """
-        Constructor
+        Create a new input/output slot to a given Node
         :param name: Valid string 
         :param role: Slot.INPUT or Slot.OUTPUT
         :param parent_node: Valid Node to be associated to

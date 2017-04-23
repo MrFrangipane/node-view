@@ -11,14 +11,11 @@ occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna 
 aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
 
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint 
-occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-### Graph.__init__
+### Graph Constructor
 ```python
 Graph.__init__(self, name)
 ```
-Constructor
+Create a new graph
 
 | Argument | Role |
 | --- | --- |
@@ -57,7 +54,7 @@ Represents Graph to a serializable dict
 
 ## nodeview.GraphicNode
 
-### GraphicNode.__init__
+### GraphicNode Constructor
 ```python
 GraphicNode.__init__(self, node)
 ```
@@ -81,11 +78,11 @@ example = Node()
 example.connect(a, b)
 ```
 
-### Node.__init__
+### Node Constructor
 ```python
 Node.__init__(self, name, graph, inputs=None, outputs=None, attributes=None)
 ```
-Constructor
+Create a new node to a given graph
 
 | Argument | Role |
 | --- | --- |
@@ -131,14 +128,11 @@ Represents Node to a serializable dict
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna 
 aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
 
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint 
-occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-### Slot.__init__
+### Slot Constructor
 ```python
 Slot.__init__(self, name, role, parent_node, attributes=None)
 ```
-Constructor
+Create a new input/output slot to a given Node
 
 | Argument | Role |
 | --- | --- |
