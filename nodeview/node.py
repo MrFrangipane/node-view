@@ -23,17 +23,7 @@ from errors import NodeviewNodeAttributeError
 
 class Node(object):
     """
-    Class holding data solts bmofjze zelze ze zefze zef ze
-    
-    f zef zofzefizfoizefze fzefijzef z zef z
-    
-    ef zefzef zfzef zfeghty nj uj-j rgd trh 
-    
-    ergerg e
-    
-    ```python
-    example = Node()
-    example.connect(a, b)
+    Holds slots and their connections, plus user attributes
     ```
     """
 

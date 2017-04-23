@@ -145,6 +145,12 @@ def get_markdown(module):
 
     output.extend(get_classes(module))
 
+    if hasattr(module, "DISCLAIMER"):
+        output.extend([
+            '---',
+            module.DISCLAIMER
+        ])
+
     return "\n".join([str(item) for item in output])
 
 
@@ -183,4 +189,4 @@ def get_classes(item):
 
 
 if __name__ == '__main__':
-    generate_and_save("nodeview", os.getcwd() + "/doc.md")
+    generate_and_save("nodeview", os.getcwd() + "/README.md")
