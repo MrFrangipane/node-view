@@ -20,15 +20,35 @@ from node import Node
 
 
 class Graph(object):
+    """
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna 
+    aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+
+    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint 
+    occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    """
 
     def __init__(self, name):
+        """
+        Constructor
+        :param name: Valid string 
+        """
         self.name = name
         self.nodes = list()
 
     def add_node(self, node):
+        """
+        Add a valid Node to the graph
+        :param node: Valid Node
+        :return: None
+        """
         self.nodes.append(node)
 
     def to_dict(self):
+        """
+        Represents Graph to a serializable dict
+        :return: dict
+        """
         graph_dict = OrderedDict()
         graph_dict['name'] = self.name
         graph_dict['nodes'] = [node.to_dict() for node in self.nodes]
@@ -37,6 +57,10 @@ class Graph(object):
 
     @staticmethod
     def from_dict(graph_dict):
+        """
+        Recreates Graph from dict 
+        :return: Graph
+        """
         graph = Graph(graph_dict['name'])
         input_slots = dict()
         output_slots = dict()

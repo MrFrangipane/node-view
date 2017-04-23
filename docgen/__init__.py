@@ -9,17 +9,23 @@ def _module_header(module):
     ]
 
 
-def _class_header(class_name):
+def _class_header(class_, parent):
     return [
         '',
-        '## {class_name}'.format(class_name=class_name)
+        '## {parent_name}.{class_name}'.format(
+            parent_name=parent.__name__,
+            class_name=class_.__name__
+        )
     ]
 
 
-def _function_header(function_name):
+def _function_header(function, parent):
     return [
         '',
-        '### {function_name}'.format(function_name=function_name)
+        '### {parent_name}.{function_name}'.format(
+            parent_name=parent.__name__,
+            function_name=function.__name__
+        )
     ]
 
 
@@ -72,10 +78,9 @@ def _format_docstring(docstring):
             _, arg, role = line.split(':')
 
             output.append("| `{arg}` | {role} |".format(
-                arg=arg,
+                arg=arg.replace("param ", ""),
                 role=role
             ))
-
 
     return output
 
@@ -129,11 +134,8 @@ def get_functions(item):
     for function_name, function in pydoc.inspect.getmembers(item, _is_function_or_method):
         if function_name.startswith("_") and function_name != '__init__': continue
 
-        output.extend(_function_header(function_name))
-        output.extend(_function_signature(
-            function=function,
-            parent=item
-        ))
+        output.extend(_function_header(function, parent=item))
+        output.extend(_function_signature(function, parent=item))
 
         docstring = pydoc.inspect.getdoc(function)
         if docstring is not None:
@@ -148,7 +150,7 @@ def get_classes(item):
     for class_name, class_ in pydoc.inspect.getmembers(item, pydoc.inspect.isclass):
         if class_name.startswith("_"): continue
 
-        output.extend(_class_header(class_name))
+        output.extend(_class_header(class_, parent=item))
 
         doc = pydoc.inspect.getdoc(class_)
         if doc is not None:

@@ -38,6 +38,14 @@ class Node(object):
     """
 
     def __init__(self, name, graph, inputs=None, outputs=None, attributes=None):
+        """
+        Constructor
+        :param name: Valid string 
+        :param graph: Parent Graph
+        :param inputs: List of input names
+        :param outputs: List of output names
+        :param attributes: **Serializable** user attributes (OrderedDict recomanded)
+        """
         self.uid = str(uid())
         self.name = name
         self.graph = graph
@@ -82,15 +90,29 @@ class Node(object):
             self.outputs[output_name] = slot
 
     def attribute_names(self):
+        """
+        List attributes names
+        :return: List of strings
+        """
         return self.attributes.keys()
 
     def get(self, item, default=None):
+        """
+        Similar to dict.get()
+        :param item: Name of the attribute 
+        :param default: Default value if attribute missing
+        :return: Value
+        """
         try:
             return self[item]
         except NodeviewNodeAttributeError:
             return default
 
     def to_dict(self):
+        """
+        Represents Node to a serializable dict
+        :return: dict
+        """
         node_dict = OrderedDict()
         node_dict['uid'] = self.uid
         node_dict['name'] = self.name
