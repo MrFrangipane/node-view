@@ -20,6 +20,14 @@ def _class_header(class_, parent):
 
 
 def _function_header(function, parent):
+    if function.__name__ == '__init__':
+        return [
+            '',
+            '### {parent_name} Constructor'.format(
+                parent_name=parent.__name__,
+            )
+        ]
+
     return [
         '',
         '### {parent_name}.{function_name}'.format(
