@@ -1,4 +1,5 @@
 # nodeview
+
 A PySide nodal view
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna 
@@ -8,13 +9,16 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
 occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
 ## nodeview.Graph
+
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna 
 aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
 
 ### Graph Constructor
+
 ```python
 Graph.__init__(self, name)
 ```
+
 Create a new graph
 
 | Argument | Role |
@@ -22,9 +26,11 @@ Create a new graph
 | `name` |  Valid string  |
 
 ### Graph.add_node
+
 ```python
 Graph.add_node(self, node)
 ```
+
 Add a valid Node to the graph
 
 | Argument | Role |
@@ -33,9 +39,11 @@ Add a valid Node to the graph
 | `return` |  None |
 
 ### Graph.from_dict
+
 ```python
 Graph.from_dict(graph_dict)
 ```
+
 Recreates Graph from dict 
 
 | Argument | Role |
@@ -43,9 +51,11 @@ Recreates Graph from dict
 | `return` |  Graph |
 
 ### Graph.to_dict
+
 ```python
 Graph.to_dict(self)
 ```
+
 Represents Graph to a serializable dict
 
 | Argument | Role |
@@ -54,17 +64,23 @@ Represents Graph to a serializable dict
 
 ## nodeview.GraphicNode
 
+
 ### GraphicNode Constructor
+
 ```python
 GraphicNode.__init__(self, node)
 ```
 
+
 ### GraphicNode.update
+
 ```python
 GraphicNode.update(self)
 ```
 
+
 ## nodeview.Node
+
 Class holding data solts bmofjze zelze ze zefze zef ze
 
 f zef zofzefizfoizefze fzefijzef z zef z
@@ -79,9 +95,11 @@ example.connect(a, b)
 ```
 
 ### Node Constructor
+
 ```python
 Node.__init__(self, name, graph, inputs=None, outputs=None, attributes=None)
 ```
+
 Create a new node to a given graph
 
 | Argument | Role |
@@ -93,9 +111,11 @@ Create a new node to a given graph
 | `attributes` |  **Serializable** user attributes (OrderedDict recomanded) |
 
 ### Node.attribute_names
+
 ```python
 Node.attribute_names(self)
 ```
+
 List attributes names
 
 | Argument | Role |
@@ -103,9 +123,11 @@ List attributes names
 | `return` |  List of strings |
 
 ### Node.get
+
 ```python
 Node.get(self, item, default=None)
 ```
+
 Similar to dict.get()
 
 | Argument | Role |
@@ -115,9 +137,11 @@ Similar to dict.get()
 | `return` |  Value |
 
 ### Node.to_dict
+
 ```python
 Node.to_dict(self)
 ```
+
 Represents Node to a serializable dict
 
 | Argument | Role |
@@ -125,13 +149,16 @@ Represents Node to a serializable dict
 | `return` |  dict |
 
 ## nodeview.Slot
+
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna 
 aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
 
 ### Slot Constructor
+
 ```python
 Slot.__init__(self, name, role, parent_node, attributes=None)
 ```
+
 Create a new input/output slot to a given Node
 
 | Argument | Role |
@@ -142,9 +169,11 @@ Create a new input/output slot to a given Node
 | `attributes` |  **Serializable** user attributes |
 
 ### Slot.clear
+
 ```python
 Slot.clear(self)
 ```
+
 Disconnect **all** slots
 
 | Argument | Role |
@@ -152,9 +181,11 @@ Disconnect **all** slots
 | `return` |  None |
 
 ### Slot.connect
+
 ```python
 Slot.connect(self, target_slot, _mirror_connect=False)
 ```
+
 Connect blah to bleh
 
 | Argument | Role |
@@ -164,9 +195,11 @@ Connect blah to bleh
 | `return` |  None |
 
 ### Slot.disconnect
+
 ```python
 Slot.disconnect(self, target_slot)
 ```
+
 Disconnect blah from bleh
 
 | Argument | Role |
@@ -175,9 +208,11 @@ Disconnect blah from bleh
 | `return` |  None |
 
 ### Slot.to_dict
+
 ```python
 Slot.to_dict(self)
 ```
+
 Represents Slot to a serializable dict
 
 | Argument | Role |

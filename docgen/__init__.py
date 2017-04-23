@@ -1,3 +1,10 @@
+"""
+Largely inspired from
+- https://medium.com/python-pandemonium/python-introspection-with-the-inspect-module-2c85d5aa5a48
+- https://gist.github.com/dvirsky/30ffbd3c7d8f37d4831b30671b681c24
+
+Many thanks to their respective authors
+"""
 import os
 import sys
 import pydoc
@@ -5,7 +12,8 @@ import pydoc
 
 def _module_header(module):
     return [
-        '# {module_name}'.format(module_name=module.__name__)
+        '# {module_name}'.format(module_name=module.__name__),
+        ''
     ]
 
 
@@ -15,7 +23,8 @@ def _class_header(class_, parent):
         '## {parent_name}.{class_name}'.format(
             parent_name=parent.__name__,
             class_name=class_.__name__
-        )
+        ),
+        ''
     ]
 
 
@@ -25,7 +34,8 @@ def _function_header(function, parent):
             '',
             '### {parent_name} Constructor'.format(
                 parent_name=parent.__name__,
-            )
+            ),
+            ''
         ]
 
     return [
@@ -33,7 +43,8 @@ def _function_header(function, parent):
         '### {parent_name}.{function_name}'.format(
             parent_name=parent.__name__,
             function_name=function.__name__
-        )
+        ),
+        ''
     ]
 
 
@@ -48,7 +59,8 @@ def _function_signature(function, parent):
             function_name=function.__name__,
             args_signature=args_signature
         ),
-        '```'
+        '```',
+        ''
     ]
 
 
