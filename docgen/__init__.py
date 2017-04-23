@@ -31,10 +31,12 @@ def _function_signature(function):
         args[0] = "_self_"
 
     return [
-        '`{function_name}({args})`'.format(
+        '```python',
+        '{function_name}({args})'.format(
             function_name=function.__name__,
             args=", ".join(args)
-        )
+        ),
+        '```'
     ]
 
 
@@ -83,7 +85,6 @@ def get_markdown(module):
 
     if functions:
         output.extend(functions)
-        #output.extend(_separator())
 
     output.extend(get_classes(module))
 

@@ -3,18 +3,26 @@
 ## Graph
 
 ### add_node
-`add_node(_self_, node)`
+```python
+add_node(_self_, node)
+```
 
 ### from_dict
-`from_dict(graph_dict)`
+```python
+from_dict(graph_dict)
+```
 
 ### to_dict
-`to_dict(_self_)`
+```python
+to_dict(_self_)
+```
 
 ## GraphicNode
 
 ### update
-`update(_self_)`
+```python
+update(_self_)
+```
 
 ## Node
 Class holding data solts bmofjze zelze ze zefze zef ze
@@ -31,24 +39,38 @@ example.connect(a, b)
 ```
 
 ### attribute_names
-`attribute_names(_self_)`
+```python
+attribute_names(_self_)
+```
 
 ### get
-`get(_self_, item, default)`
+```python
+get(_self_, item, default)
+```
 
 ### to_dict
-`to_dict(_self_)`
+```python
+to_dict(_self_)
+```
 
 ## Slot
 
 ### clear
-`clear(_self_)`
+```python
+clear(_self_)
+```
 
 ### connect
-`connect(_self_, target_slot, _mirror_connect)`
+```python
+connect(_self_, target_slot, _mirror_connect)
+```
 
 ### disconnect
-`disconnect(_self_, target_slot)`
+```python
+disconnect(_self_, target_slot)
+```
 
 ### to_dict
-`to_dict(_self_)`
+```python
+to_dict(_self_)
+```
