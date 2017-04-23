@@ -24,7 +24,6 @@ from errors import NodeviewNodeAttributeError
 class Node(object):
     """
     Holds slots and their connections, plus user attributes
-    ```
     """
 
     def __init__(self, name, graph, inputs=None, outputs=None, attributes=None):

@@ -75,7 +75,6 @@ GraphicNode.update(self)
 ## nodeview.Node
 
 Holds slots and their connections, plus user attributes
-```
 
 ### Node Constructor
 
