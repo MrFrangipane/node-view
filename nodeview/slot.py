@@ -33,6 +33,13 @@ class Slot(object):
     OUTPUT = "output"
 
     def __init__(self, name, role, parent_node, attributes=None):
+        """
+        Constructor
+        :param name: Valid string 
+        :param role: Slot.INPUT or Slot.OUTPUT
+        :param parent_node: Valid Node to be associated to
+        :param attributes: **Serializable** user attributes
+        """
         self.uid = str(uid())
         self._parent_node = parent_node
         self.name = name
@@ -67,16 +74,29 @@ class Slot(object):
             target_slot.connect(self, _mirror_connect=True)
 
     def disconnect(self, target_slot):
+        """
+        Disconnect blah from bleh
+        :param target_slot: a valid Slot
+        :return: None
+        """
         if target_slot in self.connected:
             self.connected.remove(target_slot)
             target_slot.disconnect(self)
 
     def clear(self):
+        """
+        Disconnect **all** slots
+        :return: None
+        """
         connected = list(self.connected)
         for target_slot in connected:
             target_slot.disconnect(self)
 
     def to_dict(self):
+        """
+        Represents Slot to a serializable dict
+        :return: dict
+        """
         slot_dict = OrderedDict()
         slot_dict['uid'] = self.uid
         slot_dict['name'] = self.name
