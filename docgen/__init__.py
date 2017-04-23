@@ -6,22 +6,21 @@ import inspect
 
 def _module_header(module_name):
     return [
-        '',
-        '# Module `{module_name}`'.format(module_name=module_name)
+        '# {module_name}'.format(module_name=module_name)
     ]
 
 
 def _class_header(class_name):
     return [
         '',
-        '## Class `{class_name}`'.format(class_name=class_name)
+        '## {class_name}'.format(class_name=class_name)
     ]
 
 
 def _function_header(function_name):
     return [
         '',
-        '### `{function_name}`'.format(function_name=function_name)
+        '### {function_name}'.format(function_name=function_name)
     ]
 
 
@@ -32,7 +31,7 @@ def _function_signature(function):
         args[0] = "_self_"
 
     return [
-        '**{function_name}**({args})'.format(
+        '`{function_name}({args})`'.format(
             function_name=function.__name__,
             args=", ".join(args)
         )
@@ -84,7 +83,7 @@ def get_markdown(module):
 
     if functions:
         output.extend(functions)
-        output.extend(_separator())
+        #output.extend(_separator())
 
     output.extend(get_classes(module))
 
@@ -121,8 +120,6 @@ def get_classes(item):
 
         output.extend(get_functions(class_))
         output.extend(get_classes(class_))
-
-        output.extend(_separator())
 
     return output
 

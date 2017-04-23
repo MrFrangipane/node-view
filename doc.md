@@ -1,29 +1,22 @@
+# nodeview
 
-# Module `nodeview`
+## Graph
 
-## Class `Graph`
+### add_node
+`add_node(_self_, node)`
 
-### `add_node`
-**add_node**(_self_, node)
+### from_dict
+`from_dict(graph_dict)`
 
-### `from_dict`
-**from_dict**(graph_dict)
+### to_dict
+`to_dict(_self_)`
 
-### `to_dict`
-**to_dict**(_self_)
+## GraphicNode
 
-***
+### update
+`update(_self_)`
 
-
-## Class `GraphicNode`
-
-### `update`
-**update**(_self_)
-
-***
-
-
-## Class `Node`
+## Node
 Class holding data solts bmofjze zelze ze zefze zef ze
 
 f zef zofzefizfoizefze fzefijzef z zef z
@@ -37,30 +30,25 @@ example = Node()
 example.connect(a, b)
 ```
 
-### `attribute_names`
-**attribute_names**(_self_)
+### attribute_names
+`attribute_names(_self_)`
 
-### `get`
-**get**(_self_, item, default)
+### get
+`get(_self_, item, default)`
 
-### `to_dict`
-**to_dict**(_self_)
+### to_dict
+`to_dict(_self_)`
 
-***
+## Slot
 
+### clear
+`clear(_self_)`
 
-## Class `Slot`
+### connect
+`connect(_self_, target_slot, _mirror_connect)`
 
-### `clear`
-**clear**(_self_)
+### disconnect
+`disconnect(_self_, target_slot)`
 
-### `connect`
-**connect**(_self_, target_slot, _mirror_connect)
-
-### `disconnect`
-**disconnect**(_self_, target_slot)
-
-### `to_dict`
-**to_dict**(_self_)
-
-***
+### to_dict
+`to_dict(_self_)`
