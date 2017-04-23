@@ -1,12 +1,11 @@
 import os
 import sys
 import pydoc
-import inspect
 
 
-def _module_header(module_name):
+def _module_header(module):
     return [
-        '# {module_name}'.format(module_name=module_name)
+        '# {module_name}'.format(module_name=module.__name__)
     ]
 
 
@@ -24,17 +23,16 @@ def _function_header(function_name):
     ]
 
 
-def _function_signature(function):
-    args = inspect.getargspec(function).args
-
-    if args[0] == "self":
-        args[0] = "_self_"
+def _function_signature(function, parent):
+    args_specs = pydoc.inspect.getargspec(function)
+    args_signature = pydoc.inspect.formatargspec(*args_specs)
 
     return [
         '```python',
-        '{function_name}({args})'.format(
+        '{parent}.{function_name}{args_signature}'.format(
+            parent=parent.__name__,
             function_name=function.__name__,
-            args=", ".join(args)
+            args_signature=args_signature
         ),
         '```'
     ]
@@ -49,7 +47,37 @@ def _separator():
 
 
 def _is_function_or_method(object_):
-    return inspect.isfunction(object_) or inspect.ismethod(object_)
+    return pydoc.inspect.isfunction(object_) or pydoc.inspect.ismethod(object_)
+
+
+def _format_docstring(docstring):
+    output = list()
+    lines = docstring.split('\n')
+
+    arg_table_initialized = False
+
+    for line in lines:
+        if not line.startswith(':'):
+            output.append(line)
+
+        if not arg_table_initialized:
+            output.append("")
+            output.append("| Argument | Role |")
+            output.append("| --- | --- |")
+
+            arg_table_initialized = True
+
+        else:
+
+            _, arg, role = line.split(':')
+
+            output.append("| `{arg}` | {role} |".format(
+                arg=arg,
+                role=role
+            ))
+
+
+    return output
 
 
 def genereate(module_name):
@@ -79,7 +107,11 @@ def generate_and_save(module_name, output_filepath):
 
 
 def get_markdown(module):
-    output = _module_header(module.__name__)
+    output = _module_header(module)
+
+    doc = pydoc.inspect.getdoc(module)
+    if doc is not None:
+        output.append(doc)
 
     functions = get_functions(module)
 
@@ -94,15 +126,18 @@ def get_markdown(module):
 def get_functions(item):
     output = list()
 
-    for function_name, function in inspect.getmembers(item, _is_function_or_method):
-        if function_name.startswith("_"): continue
+    for function_name, function in pydoc.inspect.getmembers(item, _is_function_or_method):
+        if function_name.startswith("_") and function_name != '__init__': continue
 
         output.extend(_function_header(function_name))
-        output.extend(_function_signature(function))
+        output.extend(_function_signature(
+            function=function,
+            parent=item
+        ))
 
-        doc = inspect.getdoc(function)
-        if doc is not None:
-            output.append(doc)
+        docstring = pydoc.inspect.getdoc(function)
+        if docstring is not None:
+            output.extend(_format_docstring(docstring))
 
     return output
 
@@ -110,12 +145,12 @@ def get_functions(item):
 def get_classes(item):
     output = list()
 
-    for class_name, class_ in inspect.getmembers(item, inspect.isclass):
+    for class_name, class_ in pydoc.inspect.getmembers(item, pydoc.inspect.isclass):
         if class_name.startswith("_"): continue
 
         output.extend(_class_header(class_name))
 
-        doc = inspect.getdoc(class_)
+        doc = pydoc.inspect.getdoc(class_)
         if doc is not None:
             output.append(doc)
 

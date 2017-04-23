@@ -21,6 +21,13 @@ from errors import NodeviewConnectionRoleError, NodeviewConnectionLimitError
 
 
 class Slot(object):
+    """
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna 
+    aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+    
+    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint 
+    occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    """
 
     INPUT = "input"
     OUTPUT = "output"
@@ -38,6 +45,12 @@ class Slot(object):
             self.attributes = attributes
 
     def connect(self, target_slot, _mirror_connect=False):
+        """
+        Connect blah to bleh
+        :param target_slot: Slot
+        :param _mirror_connect: do not use
+        :return: None
+        """
         if target_slot.role == self.role:
             raise NodeviewConnectionRoleError(self, target_slot)
 
