@@ -138,9 +138,3 @@ ENV/
 
 # Rope project settings
 .ropeproject
-
-
-# Temp
-
-doc.md
-docgen/
