@@ -147,7 +147,9 @@ def get_markdown(module):
 
     if hasattr(module, "DISCLAIMER"):
         output.extend([
+            '',
             '---',
+            '',
             module.DISCLAIMER
         ])
 

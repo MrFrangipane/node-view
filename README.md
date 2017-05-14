@@ -55,23 +55,6 @@ Represents Graph to a serializable dict
 | --- | --- |
 | `return` |  dict |
 
-## nodeview.GraphicNode
-
-
-### GraphicNode Constructor
-
-```python
-GraphicNode.__init__(self, node)
-```
-
-
-### GraphicNode.update
-
-```python
-GraphicNode.update(self)
-```
-
-
 ## nodeview.Node
 
 Holds slots and their connections, plus user attributes
@@ -199,7 +182,9 @@ Represents Slot to a serializable dict
 | Argument | Role |
 | --- | --- |
 | `return` |  dict |
+
 ---
+
 Copyright (C) 2017  Valentin Moriceau - moriceau.v@gmail.com
     
 This program is free software: you can redistribute it and/or modify
