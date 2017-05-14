@@ -20,6 +20,7 @@ from collections import OrderedDict
 import nodeview
 import nodeview.node
 import nodeview.slot
+import nodeview.geometry
 import mock
 
 
@@ -41,6 +42,7 @@ class TestNode(TestCase):
         self.assertEqual(dict(), node.inputs)
         self.assertEqual(dict(), node.outputs)
         self.assertEqual(dict(), node.attributes)
+        self.assertIsInstance(node.geometry, nodeview.geometry.NodeGeometry)
 
     def test_create_node_in_graph(self):
         node = nodeview.Node("Node", graph=self.graph)

@@ -5,7 +5,6 @@ import errors
 from slot import Slot
 from node import Node
 from graph import Graph
-from graphics import GraphicNode
 
 
 DISCLAIMER = """Copyright (C) 2017  Valentin Moriceau - moriceau.v@gmail.com

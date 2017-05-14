@@ -18,6 +18,7 @@ Nodeview. A PySide nodal view
 from uuid import uuid4 as uid
 from collections import OrderedDict
 from slot import Slot
+from geometry import NodeGeometry
 from errors import NodeviewNodeAttributeError
 
 
@@ -41,6 +42,7 @@ class Node(object):
         self.inputs = OrderedDict()
         self.outputs = OrderedDict()
         self.attributes = OrderedDict()
+        self.geometry = NodeGeometry()
 
         if self.graph is not None:
             self.graph.add_node(self)
@@ -53,6 +55,8 @@ class Node(object):
 
         if attributes is not None:
             self.attributes = attributes
+
+        self._init_geometry()
 
     def __getitem__(self, item):
         try:
@@ -77,6 +81,10 @@ class Node(object):
                 parent_node=self
             )
             self.outputs[output_name] = slot
+
+    def _init_geometry(self):
+        self.geometry.set_node(self)
+        self.geometry.compute()
 
     def attribute_names(self):
         """
