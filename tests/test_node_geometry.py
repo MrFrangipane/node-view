@@ -32,28 +32,28 @@ class TestNodeGeometry(TestCase):
 
     def test_init_bounding_rectangle(self):
         self.assertEqual(
-            Rectangle(0, 0, 130, 135),
+            Rectangle(0, 0, 196, 141),
             self.node.geometry.bounding_rect
         )
 
     def test_init_header_rectangle(self):
         self.assertEqual(
-            Rectangle(5, 5, 120, 50),
+            Rectangle(8, 8, 180, 50),
             self.node.geometry.header_rect
         )
 
     def test_init_main_rectangle(self):
         self.assertEqual(
-            Rectangle(5, 55, 120, 75),
+            Rectangle(8, 58, 180, 75),
             self.node.geometry.main_rect
         )
 
     def test_init_input_slot_rectangles(self):
         self.assertEqual(
             [
-                Rectangle(5, 62, 10, 10),
-                Rectangle(5, 87, 10, 10),
-                Rectangle(5, 112, 10, 10)
+                Rectangle(6, 65, 10, 10),
+                Rectangle(6, 90, 10, 10),
+                Rectangle(6, 115, 10, 10)
             ],
             self.node.geometry.input_slot_rects
         )
@@ -61,9 +61,9 @@ class TestNodeGeometry(TestCase):
     def test_init_input_label_rectangles(self):
         self.assertEqual(
             [
-                Rectangle(15, 55, 50, 25),
-                Rectangle(15, 80, 50, 25),
-                Rectangle(15, 105, 50, 25)
+                Rectangle(18, 58, 80, 25),
+                Rectangle(18, 83, 80, 25),
+                Rectangle(18, 108, 80, 25)
             ],
             self.node.geometry.input_label_rects
         )
@@ -71,8 +71,8 @@ class TestNodeGeometry(TestCase):
     def test_init_output_slot_rectangles(self):
         self.assertEqual(
             [
-                Rectangle(115, 62, 10, 10),
-                Rectangle(115, 87, 10, 10)
+                Rectangle(180, 65, 10, 10),
+                Rectangle(180, 90, 10, 10)
             ],
             self.node.geometry.output_slot_rects
         )
@@ -80,8 +80,8 @@ class TestNodeGeometry(TestCase):
     def test_init_output_label_rectangles(self):
         self.assertEqual(
             [
-                Rectangle(65, 55, 50, 25),
-                Rectangle(65, 80, 50, 25)
+                Rectangle(98, 58, 80, 25),
+                Rectangle(98, 83, 80, 25)
             ],
             self.node.geometry.output_label_rects
         )

@@ -44,10 +44,10 @@ class NodeGeometry(object):
     - `output_label_rects`
     """
 
-    FIXED_WIDTH = 220
-    ROW_HEIGHT = 30
+    FIXED_WIDTH = 180
+    ROW_HEIGHT = 25
     MAIN_PADDING = 8
-    SLOT_RADIUS = 15
+    SLOT_RADIUS = 10
 
     def __init__(self):
         self.node = None
@@ -105,7 +105,7 @@ class NodeGeometry(object):
 
         for row_index, input in enumerate(self.node.inputs):
             slot_rect = Rectangle(
-                self.main_rect.x,
+                self.main_rect.x - (self.MAIN_PADDING / 3),
                 self.main_rect.y + self.ROW_HEIGHT * row_index + slot_padding,
                 self.SLOT_RADIUS,
                 self.SLOT_RADIUS
@@ -122,7 +122,7 @@ class NodeGeometry(object):
 
         for row_index, input in enumerate(self.node.outputs):
             slot_rect = Rectangle(
-                self.main_rect.x + self.SLOT_RADIUS + (2 * label_width),
+                self.main_rect.x + self.SLOT_RADIUS + (2 * label_width) +  (self.MAIN_PADDING / 3),
                 self.main_rect.y + self.ROW_HEIGHT * row_index + slot_padding,
                 self.SLOT_RADIUS,
                 self.SLOT_RADIUS
