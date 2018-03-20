@@ -2,14 +2,14 @@
 
 Nodeview. A PySide nodal view
 
-## nodeview.Graph
+## Class **Graph**
 
 Holds all the nodes 
 
-### Graph Constructor
+### Constructor
 
 ```python
-Graph.__init__(self, name)
+Graph(name)
 ```
 
 Create a new graph
@@ -18,10 +18,10 @@ Create a new graph
 | --- | --- |
 | `name` |  Valid string  |
 
-### Graph.add_node
+### **add_node**
 
 ```python
-Graph.add_node(self, node)
+Graph.add_node(node)
 ```
 
 Add a valid Node to the graph
@@ -29,40 +29,40 @@ Add a valid Node to the graph
 | Argument | Role |
 | --- | --- |
 | `node` |  Valid Node |
-| `return` |  None |
+| Returns |  None |
 
-### Graph.from_dict
+### **from_dict**
 
 ```python
-Graph.from_dict(graph_dict)
+Graph.from_dict()
 ```
 
 Recreates Graph from dict 
 
 | Argument | Role |
 | --- | --- |
-| `return` |  Graph |
+| Returns |  Graph |
 
-### Graph.to_dict
+### **to_dict**
 
 ```python
-Graph.to_dict(self)
+Graph.to_dict()
 ```
 
 Represents Graph to a serializable dict
 
 | Argument | Role |
 | --- | --- |
-| `return` |  dict |
+| Returns |  dict |
 
-## nodeview.Node
+## Class **Node**
 
 Holds slots and their connections, plus user attributes
 
-### Node Constructor
+### Constructor
 
 ```python
-Node.__init__(self, name, graph, inputs=None, outputs=None, attributes=None)
+Node(name, graph, inputs=None, outputs=None, attributes=None)
 ```
 
 Create a new node to a given graph
@@ -75,22 +75,22 @@ Create a new node to a given graph
 | `outputs` |  List of output names |
 | `attributes` |  **Serializable** user attributes (OrderedDict recomanded) |
 
-### Node.attribute_names
+### **attribute_names**
 
 ```python
-Node.attribute_names(self)
+Node.attribute_names()
 ```
 
 List attributes names
 
 | Argument | Role |
 | --- | --- |
-| `return` |  List of strings |
+| Returns |  List of strings |
 
-### Node.get
+### **get**
 
 ```python
-Node.get(self, item, default=None)
+Node.get(item, default=None)
 ```
 
 Similar to dict.get()
@@ -99,28 +99,28 @@ Similar to dict.get()
 | --- | --- |
 | `item` |  Name of the attribute  |
 | `default` |  Default value if attribute missing |
-| `return` |  Value |
+| Returns |  Value |
 
-### Node.to_dict
+### **to_dict**
 
 ```python
-Node.to_dict(self)
+Node.to_dict()
 ```
 
 Represents Node to a serializable dict
 
 | Argument | Role |
 | --- | --- |
-| `return` |  dict |
+| Returns |  dict |
 
-## nodeview.Slot
+## Class **Slot**
 
 Holds connections, plus user attributes 
 
-### Slot Constructor
+### Constructor
 
 ```python
-Slot.__init__(self, name, role, parent_node, attributes=None)
+Slot(name, role, parent_node, attributes=None)
 ```
 
 Create a new input/output slot to a given Node
@@ -132,22 +132,22 @@ Create a new input/output slot to a given Node
 | `parent_node` |  Valid Node to be associated to |
 | `attributes` |  **Serializable** user attributes |
 
-### Slot.clear
+### **clear**
 
 ```python
-Slot.clear(self)
+Slot.clear()
 ```
 
 Disconnect **all** slots
 
 | Argument | Role |
 | --- | --- |
-| `return` |  None |
+| Returns |  None |
 
-### Slot.connect
+### **connect**
 
 ```python
-Slot.connect(self, target_slot, _mirror_connect=False)
+Slot.connect(target_slot, _mirror_connect=False)
 ```
 
 Connect blah to bleh
@@ -156,12 +156,12 @@ Connect blah to bleh
 | --- | --- |
 | `target_slot` |  Slot |
 | `_mirror_connect` |  do not use |
-| `return` |  None |
+| Returns |  None |
 
-### Slot.disconnect
+### **disconnect**
 
 ```python
-Slot.disconnect(self, target_slot)
+Slot.disconnect(target_slot)
 ```
 
 Disconnect blah from bleh
@@ -169,19 +169,19 @@ Disconnect blah from bleh
 | Argument | Role |
 | --- | --- |
 | `target_slot` |  a valid Slot |
-| `return` |  None |
+| Returns |  None |
 
-### Slot.to_dict
+### **to_dict**
 
 ```python
-Slot.to_dict(self)
+Slot.to_dict()
 ```
 
 Represents Slot to a serializable dict
 
 | Argument | Role |
 | --- | --- |
-| `return` |  dict |
+| Returns |  dict |
 
 ---
 
